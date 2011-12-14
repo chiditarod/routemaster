@@ -1,3 +1,5 @@
+import os
+
 # Django settings for Routemaster project.
 
 DEBUG = True
@@ -9,16 +11,28 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
+#DATABASES = {
+#    'default': {
+#        'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
+#        'NAME': 'django_routemaster',                      # Or path to database file if using sqlite3.
+#        'USER': 'chiditarod',                      # Not used with sqlite3.
+#        'PASSWORD': 'mush08',                  # Not used with sqlite3.
+#        'HOST': 'mysql.nuclearblender.com',                      # Set to empty string for localhost. Not used with sqlite3.
+#        'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
+#    }
+#}
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'django_routemaster',                      # Or path to database file if using sqlite3.
-        'USER': 'chiditarod',                      # Not used with sqlite3.
-        'PASSWORD': 'mush08',                  # Not used with sqlite3.
-        'HOST': 'mysql.nuclearblender.com',                      # Set to empty string for localhost. Not used with sqlite3.
-        'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'djangostack',
+        'HOST': '/Applications/DjangoStack/mysql/tmp/mysql.sock',
+        'PORT': '3306',
+        'USER': 'bitnami',
+        'PASSWORD': 'b710a1a906'
     }
 }
+
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -68,11 +82,11 @@ TEMPLATE_LOADERS = (
 )
 
 MIDDLEWARE_CLASSES = (
-    'django.middleware.common.CommonMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
+#    'django.middleware.common.CommonMiddleware',
+#    'django.contrib.sessions.middleware.SessionMiddleware',
+#    'django.middleware.csrf.CsrfViewMiddleware',
+#    'django.contrib.auth.middleware.AuthenticationMiddleware',
+#    'django.contrib.messages.middleware.MessageMiddleware',
 )
 
 ROOT_URLCONF = 'Routemaster.urls'
@@ -81,6 +95,7 @@ TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
+    os.path.join(os.path.dirname(__file__), 'templates').replace('\\','/'),
 )
 
 INSTALLED_APPS = (
@@ -90,6 +105,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.sites',
     'django.contrib.messages',
+    'Routemaster.checkpoints',
     # Uncomment the next line to enable the admin:
     # 'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
