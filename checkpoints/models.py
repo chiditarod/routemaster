@@ -3,11 +3,16 @@ from django.db import models
 class Race(models.Model):
     name = models.CharField(max_length=60)
     date = models.DateField()
+    num_teams = models.IntegerField()
+    num_people_per_team = models.IntegerField()
+    max_race_distance = models.DecimalField(max_digits=3, decimal_places=2)
+    max_leg_distance = models.DecimalField(max_digits=3, decimal_places=2)
+    url = models.URLField()
 
 class Checkpoint(models.Model):
     name = models.CharField(max_length=60)
     capacity = models.IntegerField()
-    address = models.CharField(max_length=50)
+    address = models.CharField(max_length=70)
     city = models.CharField(max_length=60)
     state_province = models.CharField(max_length=30)
 
