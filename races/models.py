@@ -8,6 +8,9 @@ class Race(models.Model):
     max_race_distance = models.DecimalField(max_digits=3, decimal_places=2)
     max_leg_distance = models.DecimalField(max_digits=3, decimal_places=2)
     url = models.URLField()
+    
+    def __unicode__(self):
+        return self.name
 
 class Checkpoint(models.Model):
     name = models.CharField(max_length=60)
@@ -15,8 +18,8 @@ class Checkpoint(models.Model):
     address = models.CharField(max_length=70)
     city = models.CharField(max_length=60)
     state_province = models.CharField(max_length=30)
-    lat = models.DecimalField(max_digits=4, decimal_places=3)
-    lon = models.DecimalField(max_digits=4, decimal_places=3)
+#    lat = models.DecimalField(max_digits=10, decimal_places=2, blank=True, default='')
+#    lon = models.DecimalField(max_digits=10, decimal_places=2, blank=True, default='')
 
     def __unicode__(self):
         return self.name
@@ -29,11 +32,11 @@ class RouteLeg(models.Model):
     )
     checkpoint_a = models.ForeignKey('Checkpoint', related_name='checkpoint_a')
     checkpoint_b = models.ForeignKey('Checkpoint', related_name='checkpoint_b')
-    distance = models.DecimalField(max_digits=3, decimal_places=2)
+    distance = models.DecimalField(max_digits=5, decimal_places=2)
     measurement = models.CharField(max_length=5, choices=DISTANCE_CHOICES)
     
     def __unicode__(self):
-        return u'%s -> %s = %d miles' % (self.a, self.b, self.distance)
+        return u'%s -> %s = %d miles' % (self.checkpoint_a, self.checkpoint_b, self.distance)
 
 # Relationship between routelegs
 class Node(models.Model):
@@ -42,7 +45,7 @@ class Node(models.Model):
     order = models.IntegerField(unique=True)
 
     def __unicode__(self):
-        "Node %i of route %s: %s --> %s" % (order, parent_route.name, routeleg.checkpoint_a, routeleg.checkpoint_b) 
+        return "Node %i of route %s: %s --> %s" % (self.order, self.parent_route.name, self.routeleg.checkpoint_a, self.routeleg.checkpoint_b) 
 
 # Route
 class Route(models.Model):
@@ -53,6 +56,6 @@ class Route(models.Model):
     finish = models.ForeignKey('Checkpoint', related_name='end_checkpoint')
 
     def __unicode__(self):
-        return "Name: %s.  Start: %s,  End: %s, Legs: %i" % (name, start.name, finish.name, routelegs.count)
+        return u"%s (%s ---> %s)" % (self.name, self.start.name, self.finish.name)
 
 
