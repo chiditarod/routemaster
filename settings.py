@@ -1,12 +1,12 @@
 import os
 #
-# Django settings for Routemaster project.
+# Django settings for routemaster project.
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
-    # ('Your Name', 'your_email@domain.com'),
+   #  ('chopper', 'dev@nuclearblender.com'),
 )
 
 MANAGERS = ADMINS
@@ -25,11 +25,13 @@ MANAGERS = ADMINS
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'djangostack',
-        'HOST': '/Applications/DjangoStack/mysql/tmp/mysql.sock',
+        'NAME': 'django_routemaster',
+        #'HOST': '/Applications/DjangoStack/mysql/tmp/mysql.sock',
+        'HOST': '/Applications/MAMP/tmp/mysql/mysql.sock',
         'PORT': '3306',
-        'USER': 'bitnami',
-        'PASSWORD': 'b710a1a906'
+        #'PORT': '8889',
+        'USER': 'root',
+        'PASSWORD': 'root'
     }
 }
 
@@ -82,14 +84,14 @@ TEMPLATE_LOADERS = (
 )
 
 MIDDLEWARE_CLASSES = (
-#    'django.middleware.common.CommonMiddleware',
-#    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
 #    'django.middleware.csrf.CsrfViewMiddleware',
-#    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
 #    'django.contrib.messages.middleware.MessageMiddleware',
 )
 
-ROOT_URLCONF = 'Routemaster.urls'
+ROOT_URLCONF = 'routemaster.urls'
 
 TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
@@ -105,7 +107,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.sites',
     'django.contrib.messages',
-    'Routemaster.checkpoints',
+    'routemaster.races',
     # Uncomment the next line to enable the admin:
     # 'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:

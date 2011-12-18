@@ -4,6 +4,26 @@ from django.http import HttpResponse, Http404
 from django.shortcuts import render_to_response
 import datetime
 
+# pseudocode
+
+#def doit(request):
+
+#    gather variables:
+#        max distance of any 1 leg (default: 0 = no distance)
+#        # of checkpoints to use in race
+#        max total distance
+        # of teams racing
+        # of people per team
+
+#        for each checkpoint:
+#            name
+#            addy
+#            capacity
+#
+#
+#
+#
+
 def hello(request):
     return HttpResponse("Hello world")
 
