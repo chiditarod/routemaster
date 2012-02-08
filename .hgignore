@@ -5,3 +5,6 @@ syntax: glob
 
 django-googlemap
 geo
+
+# osx crap
+.DS_Store
