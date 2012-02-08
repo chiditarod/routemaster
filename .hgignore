@@ -3,3 +3,5 @@ syntax: glob
 *.pyc
 *.swp
 
+django-googlemap
+geo

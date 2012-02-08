@@ -7,6 +7,7 @@ class Race(models.Model):
     num_people_per_team = models.IntegerField()
     max_race_distance = models.DecimalField(max_digits=3, decimal_places=2)
     max_leg_distance = models.DecimalField(max_digits=3, decimal_places=2)
+    max_checkpoints = models.IntegerField()
     url = models.URLField()
     
     def __unicode__(self):
@@ -22,7 +23,7 @@ class Checkpoint(models.Model):
 #    lon = models.DecimalField(max_digits=10, decimal_places=2, blank=True, default='')
 
     def __unicode__(self):
-        return self.name
+        return "%s, capacity: %i" % (self.name, self.capacity)
 
 # Info about the distance between 2 checkpoints
 class RouteLeg(models.Model):
@@ -58,4 +59,6 @@ class Route(models.Model):
     def __unicode__(self):
         return u"%s (%s ---> %s)" % (self.name, self.start.name, self.finish.name)
 
+    def distanceThusFar:
+        return 1
 
