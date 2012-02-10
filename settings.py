@@ -111,6 +111,6 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.messages',
     'routemaster.races',
-    'south',
+    #'south',
 
 )
