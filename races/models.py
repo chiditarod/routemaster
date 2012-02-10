@@ -7,7 +7,10 @@ class Race(models.Model):
     num_people_per_team = models.IntegerField()
     max_race_distance = models.DecimalField(max_digits=3, decimal_places=2)
     max_leg_distance = models.DecimalField(max_digits=3, decimal_places=2)
-    max_checkpoints = models.IntegerField()
+#    checkpoint_qty = models.IntegerField()
+#    checkpoint_start = models.ForeignKey('Checkpoint', related_name='checkpoint_start')
+#    checkpoint_finish = models.ForeignKey('Checkpoint', related_name='checkpoint_finish')
+#    routes = models.ManyToManyField('Route')
     url = models.URLField()
     
     def __unicode__(self):
@@ -59,6 +62,13 @@ class Route(models.Model):
     def __unicode__(self):
         return u"%s (%s ---> %s)" % (self.name, self.start.name, self.finish.name)
 
-    def distanceThusFar:
-        return 1
-
+	def distanceThusFar(self):
+		"""docstring for distanceThusFar"""
+		total = 0
+		try:
+			for r in routelegs:
+				total += r.distance
+			return total
+		except Exception, e:
+			raise e
+		
