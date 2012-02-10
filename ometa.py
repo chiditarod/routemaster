@@ -24,9 +24,9 @@ class RaceBuilder(object):
 
     def buildRace(self, raceName):
         """main function to build an entire race, given a start and finish point."""
-
+        
         race = Race.objects.get(name=raceName)
-
+        
         # start building routes using each potential routeleg
 #        print 'building race for %s.  finding all checkpoints starting at %s' % (race.name, race.checkpoint_start.name)
         potential_legs = RouteLeg.objects.filter(checkpoint_a__name="%s" % race.checkpoint_start.name)  
@@ -118,9 +118,14 @@ class RaceBuilder(object):
 
 # ========================================================================================================================
 
+    def ip(self, x, str):
+        s = ''
+        for i in range(x):
+            s += "\t"
+        print "%s%s" % (s, str)
+
     def mungeRace(self, raceName):
         """main function to build an entire race, given a start and finish point."""
-#        raceName="Chiditarod VII"
         race = Race.objects.get(name=raceName)
         # start building routes using each potential routeleg
         print '[race] %s  [start] %s' % (race.name, race.checkpoint_start.name)
@@ -133,54 +138,58 @@ class RaceBuilder(object):
 
     def munge(self, race, legs, route = None):
 
+        x = 0
+        if route:
+            x = route.routelegs.count()
+
         # iterate through all legs we were passed.
         for leg in legs:
-
-            print 'munge: %s' % leg
+                
+            self.ip(x,"munge: %s" % leg)
             
             # check for bad distance
             if (leg.distance > race.max_leg_distance):
-                print "\tFAIL: %s length > max leg distance %s" % (leg.distance, race.max_leg_distance)
+                self.ip(x,"\tFAIL: %s length > max leg distance %s" % (leg.distance, race.max_leg_distance))
                 continue
-            print "\tPASS: %s length <= max leg distance %s" % (leg.distance, race.max_leg_distance)
+            self.ip(x,"\tPASS: %s length <= max leg distance %s" % (leg.distance, race.max_leg_distance))
 
             # checkpoint_b should never be the starting line
             if (leg.checkpoint_b == race.checkpoint_start):
-                print '\tFAIL: %s is the starting line, that can never be.' % leg.checkpoint_b.name
+                self.ip(x,'\tFAIL: %s is the starting line, that can never be.' % leg.checkpoint_b.name)
                 continue
-            print "\tPASS: %s is not the starting line" % (leg.checkpoint_b.name)
+            self.ip(x,"\tPASS: %s is not the starting line" % (leg.checkpoint_b.name))
                 
 
             # additional checks for existing routes
             if route:
-                print 'route exists. depth: %s' % route.routelegs.count()
                 numlegs = route.routelegs.count()
-                print 's'
+                self.ip(x,'\tStarting route tests.  current depth: %s' % numlegs)
                 
                 # checkpoint_b != finish, and numcheckpoints+1 == total qty
                 if (leg.checkpoint_b != race.checkpoint_finish) and (numlegs + 1 == race.checkpoint_qty):
-                    print '\tFAIL: %s is not the finish line, but this route is %i/%i full' % (leg.checkpoint_b.name, numlegs, race.checkpoint_qty)
+                    self.ip(x,'\tFAIL: %s is not the finish line, but this route is %i/%i full' % (leg.checkpoint_b.name, numlegs, race.checkpoint_qty))
                     continue
                 
                 # checkpoint_b = finish, and numcheckpoints+1 != total qty
                 if (leg.checkpoint_b == race.checkpoint_finish) and (numlegs + 1 != race.checkpoint_qty):
-                    print '\tFAIL: %s is the finish line, but this route is only %i/%i full' % (leg.checkpoint_b.name, numlegs, race.checkpoint_qty)
+                    self.ip(x,'\tFAIL: %s is the finish line, but this route is only %i/%i full' % (leg.checkpoint_b.name, numlegs, race.checkpoint_qty))
                     continue
 
-                print 't'
                 # if adding this leg makes the total distance too far
                 if getRouteLength(route) + leg.distance > race.max_race_distance:
-                    print "\tFAIL: %s will make race > max race distance %d" % (leg, race.max_race_distance)
+                    self.ip(x,"\tFAIL: %s will make race > max race distance %d" % (leg, race.max_race_distance))
                     continue
-                print "\tPASS: %s will not make the race > max race distance %d" % (leg, race.max_race_distance)
-
-                print 'u'                
+                self.ip(x,"\tPASS: %s will not make the race > max race distance %d" % (leg, race.max_race_distance))
+                
                 # fail if checkpoint_b is already used
+                bad=False
                 for r in route.routelegnode_set.all():
                     if r.routeleg.checkpoint_b == leg.checkpoint_b:
-                        print '\tFAIL: %s is already in use in this route.' % leg.checkpoint_b.name
-                        continue
-                print '\tPASS: %s is not yet in use in this route.' % leg.checkpoint_b.name
+                        bad=True
+                if bad:
+                     self.ip(x,'\tFAIL: %s is already in use in this route.' % leg.checkpoint_b.name)
+                     continue
+                self.ip(x,'\tPASS: %s is not yet in use in this route.' % leg.checkpoint_b.name)
 
 
             # and if a route doesn't exist, make one and move on.
@@ -192,7 +201,7 @@ class RaceBuilder(object):
                 route.checkpoint_finish = race.checkpoint_finish
                 route.is_valid = False
                 route.save()
-                print '[new route] %s' % route.name
+                self.ip(x,'[new route] %s' % route.name)
 
 
             # if we made it this far, add a RouteLegNode to our routes list
@@ -200,7 +209,7 @@ class RaceBuilder(object):
             node.parent_route = route
             node.routeleg = leg
             node.order = route.routelegs.count() + 1
-            print '[new node] %s [order: %s]' % (node, node.order)
+            self.ip(x,'[new node] %s [order: %s]' % (node, node.order))
             node.save()
 
             route.routelegnode_set.add(node)
@@ -210,14 +219,14 @@ class RaceBuilder(object):
             # winning condition.  add this route to our race object
             if (route.routelegs.count() == race.checkpoint_qty):
                 if (leg.checkpoint_b == race.checkpoint_finish):
-                    print '[ WIN ] %s' % route
+                    self.ip(x,'[ WIN ] %s' % route)
                     race.routes.add(route)
                     continue
 
             # ---------------------------------------------
             # ok, so we didn't win, but we have a leg that's not failing out. 
             sublegs = RouteLeg.objects.filter(checkpoint_a__name="%s" % leg.checkpoint_b.name)  
-            print '[sublegs] found %i' % len(sublegs)
+            self.ip(x,'[sublegs] found %i' % len(sublegs))
 
             race = self.munge(race, sublegs, route)
     
