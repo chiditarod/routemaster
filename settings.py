@@ -1,4 +1,5 @@
 import os
+import django
 #
 # Django settings for routemaster project.
 
@@ -22,8 +23,19 @@ MANAGERS = ADMINS
 #    }
 #}
 
+# calculated paths for django and the site
+# used as starting points for various other paths
+# from: http://morethanseven.net/2009/02/11/django-settings-tip-setting-relative-paths.html
+DJANGO_ROOT = os.path.dirname(os.path.realpath(django.__file__))
+SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
+
+
 DATABASES = {
     'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': '/Applications/DjangoStack/apps/django/django_projects/routemaster/routemaster.sqlite',
+    },
+    'mysql': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'django_routemaster',
         #'HOST': '/Applications/DjangoStack/mysql/tmp/mysql.sock',

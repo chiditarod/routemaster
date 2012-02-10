@@ -1,20 +1,25 @@
 from django.db import models
 
 class Race(models.Model):
+    DISTANCE_CHOICES = (
+        (u'miles', u'Miles'),
+        (u'km', u'Kilometers'),
+    )
     name = models.CharField(max_length=60)
     date = models.DateField()
-    url = models.URLField()
+    url = models.URLField(blank=True)
     num_teams = models.IntegerField()
     num_people_per_team = models.IntegerField()
     max_race_distance = models.DecimalField(max_digits=3, decimal_places=2)
     max_leg_distance = models.DecimalField(max_digits=3, decimal_places=2)
-    unified_start_checkpoint = models.BooleanField(default=True)
-    unified_finish_checkpoint = models.BooleanField(default=True)
-    checkpoint_qty = models.IntegerField()
-    routes = models.ManyToManyField('Route')
+    checkpoint_start = models.ForeignKey('Checkpoint', related_name='races_starting_here')
+    checkpoint_finish = models.ForeignKey('Checkpoint', related_name='races_finishing_here')
+    checkpoint_qty = models.IntegerField('checkpoints per race')
+    routes = models.ManyToManyField('Route', related_name='races', blank=True)
+    measurement_system = models.CharField(max_length=5, choices=DISTANCE_CHOICES)
     
     def __unicode__(self):
-        return self.name
+        return "%s [ %s ==> %s ]" % (self.name, self.checkpoint_start.name, self.checkpoint_finish.name)
 
 class Checkpoint(models.Model):
     name = models.CharField(max_length=60)
@@ -27,48 +32,35 @@ class Checkpoint(models.Model):
     lon = models.DecimalField(max_digits=10, decimal_places=2, blank=True, default='0')
 
     def __unicode__(self):
-        return "%s, capacity: %i" % (self.name, self.capacity)
+        return "%s [ %i, %i ]" % (self.name, self.capacity_comfortable, self.capacity_max)
 
 # Info about the distance between 2 checkpoints
 class RouteLeg(models.Model):
-    DISTANCE_CHOICES = (
-        (u'miles', u'Miles'),
-        (u'km', u'Kilometers'),
-    )
-    checkpoint_a = models.ForeignKey('Checkpoint', related_name='checkpoint_a')
-    checkpoint_b = models.ForeignKey('Checkpoint', related_name='checkpoint_b')
+    checkpoint_a = models.ForeignKey('Checkpoint', related_name='from_checkpoint')
+    checkpoint_b = models.ForeignKey('Checkpoint', related_name='to_checkpoint')
     distance = models.DecimalField(max_digits=5, decimal_places=2)
-    measurement = models.CharField(max_length=5, choices=DISTANCE_CHOICES)
     
     def __unicode__(self):
-        return u'%s -> %s = %d miles' % (self.checkpoint_a, self.checkpoint_b, self.distance)
+        return u'[ %s ] %s -> %s' % (float(self.distance), self.checkpoint_a.name, self.checkpoint_b.name)
 
 # Relationship between routelegs
-class Node(models.Model):
+class RouteLegNode(models.Model):
     parent_route = models.ForeignKey('Route')
     routeleg = models.ForeignKey('RouteLeg')
-    order = models.IntegerField(unique=True)
+    order = models.IntegerField()
 
     def __unicode__(self):
         return "Node %i of route %s: %s --> %s" % (self.order, self.parent_route.name, self.routeleg.checkpoint_a, self.routeleg.checkpoint_b) 
 
-# Route
+# A Route
 class Route(models.Model):
+    """The Route model"""        
     name = models.CharField(max_length=60)
-    routelegs = models.ManyToManyField('RouteLeg', through='Node')
-    checkpoint_start = models.ForeignKey('Checkpoint', related_name='checkpoint_start')
-    checkpoint_finish = models.ForeignKey('Checkpoint', related_name='checkpoint_finish')
+    routelegs = models.ManyToManyField('RouteLeg', through='RouteLegNode', related_name='routelegs')
+    checkpoint_start = models.ForeignKey('Checkpoint', related_name='start_for_route')
+    checkpoint_finish = models.ForeignKey('Checkpoint', related_name='finish_for_route')
+    is_valid = models.BooleanField()
 
     def __unicode__(self):
-        return u"%s (%s ---> %s)" % (self.name, self.start.name, self.finish.name)
+        return u"%s (%s ---> %s)" % (self.name, self.checkpoint_start.name, self.checkpoint_finish.name)
 
-	def distanceThusFar(self):
-		"""docstring for distanceThusFar"""
-		total = 0
-		try:
-			for r in routelegs:
-				total += r.distance
-			return total
-		except Exception, e:
-			raise e
-		

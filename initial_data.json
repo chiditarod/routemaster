@@ -7,9 +7,9 @@
             "city": "a", 
             "name": "Minimonk's Lot", 
             "capacity_max": 2000, 
-            "lon": "0.00", 
+            "lon": "0", 
             "address": "a", 
-            "lat": "0.00", 
+            "lat": "0", 
             "capacity_comfortable": 1000
         }
     }, 
@@ -21,9 +21,9 @@
             "city": "Chicago", 
             "name": "Cobra Lounge", 
             "capacity_max": 800, 
-            "lon": "0.00", 
+            "lon": "0", 
             "address": "Ashland", 
-            "lat": "0.00", 
+            "lat": "0", 
             "capacity_comfortable": 600
         }
     }, 
@@ -35,9 +35,9 @@
             "city": "Chicago", 
             "name": "Nick's Beergarden", 
             "capacity_max": 1000, 
-            "lon": "0.00", 
+            "lon": "0", 
             "address": "Milwaukee", 
-            "lat": "0.00", 
+            "lat": "0", 
             "capacity_comfortable": 800
         }
     }, 
@@ -49,9 +49,9 @@
             "city": "Chicago", 
             "name": "Bottom Lounge", 
             "capacity_max": 2000, 
-            "lon": "0.00", 
+            "lon": "0", 
             "address": "1375 W Lake St.", 
-            "lat": "0.00", 
+            "lat": "0", 
             "capacity_comfortable": 1500
         }
     }, 
@@ -63,9 +63,9 @@
             "city": "Chicago", 
             "name": "5 Star Bar", 
             "capacity_max": 900, 
-            "lon": "0.00", 
+            "lon": "0", 
             "address": "Chicago", 
-            "lat": "0.00", 
+            "lat": "0", 
             "capacity_comfortable": 700
         }
     }, 
@@ -77,9 +77,9 @@
             "city": "Chicago", 
             "name": "Roots Pizza", 
             "capacity_max": 600, 
-            "lon": "0.00", 
+            "lon": "0", 
             "address": "Chicago", 
-            "lat": "0.00", 
+            "lat": "0", 
             "capacity_comfortable": 500
         }
     }, 
@@ -91,9 +91,9 @@
             "city": "Chicago", 
             "name": "Phyllis' Musical Inn", 
             "capacity_max": 200, 
-            "lon": "0.00", 
+            "lon": "0", 
             "address": "1800 W Division", 
-            "lat": "0.00", 
+            "lat": "0", 
             "capacity_comfortable": 100
         }
     }, 
@@ -105,17 +105,18 @@
             "city": "Chicago", 
             "name": "Darkroom", 
             "capacity_max": 500, 
-            "lon": "0.00", 
+            "lon": "0", 
             "address": "Chicago", 
-            "lat": "0.00", 
+            "lat": "0", 
             "capacity_comfortable": 300
         }
-    }, 
+    }
+][
     {
         "pk": 1, 
         "model": "races.routeleg", 
         "fields": {
-            "distance": "0.80", 
+            "distance": "0.8", 
             "checkpoint_b": 6, 
             "checkpoint_a": 5
         }
@@ -124,7 +125,7 @@
         "pk": 2, 
         "model": "races.routeleg", 
         "fields": {
-            "distance": "1.40", 
+            "distance": "1.4", 
             "checkpoint_b": 7, 
             "checkpoint_a": 5
         }
@@ -133,7 +134,7 @@
         "pk": 3, 
         "model": "races.routeleg", 
         "fields": {
-            "distance": "1.00", 
+            "distance": "1", 
             "checkpoint_b": 8, 
             "checkpoint_a": 5
         }
@@ -142,7 +143,7 @@
         "pk": 4, 
         "model": "races.routeleg", 
         "fields": {
-            "distance": "1.00", 
+            "distance": "1", 
             "checkpoint_b": 9, 
             "checkpoint_a": 5
         }
@@ -151,7 +152,7 @@
         "pk": 5, 
         "model": "races.routeleg", 
         "fields": {
-            "distance": "0.50", 
+            "distance": "0.4", 
             "checkpoint_b": 10, 
             "checkpoint_a": 5
         }
@@ -160,11 +161,66 @@
         "pk": 6, 
         "model": "races.routeleg", 
         "fields": {
-            "distance": "1.10", 
+            "distance": "1.1", 
             "checkpoint_b": 11, 
             "checkpoint_a": 5
         }
-    },
+    }, 
+    {
+        "pk": 7, 
+        "model": "races.routeleg", 
+        "fields": {
+            "distance": "1.8", 
+            "checkpoint_b": 7, 
+            "checkpoint_a": 6
+        }
+    }, 
+    {
+        "pk": 8, 
+        "model": "races.routeleg", 
+        "fields": {
+            "distance": "0.3", 
+            "checkpoint_b": 8, 
+            "checkpoint_a": 6
+        }
+    }, 
+    {
+        "pk": 9, 
+        "model": "races.routeleg", 
+        "fields": {
+            "distance": "0.9", 
+            "checkpoint_b": 9, 
+            "checkpoint_a": 6
+        }
+    }, 
+    {
+        "pk": 10, 
+        "model": "races.routeleg", 
+        "fields": {
+            "distance": "1.1", 
+            "checkpoint_b": 10, 
+            "checkpoint_a": 6
+        }
+    }, 
+    {
+        "pk": 11, 
+        "model": "races.routeleg", 
+        "fields": {
+            "distance": "1.4", 
+            "checkpoint_b": 11, 
+            "checkpoint_a": 6
+        }
+    }, 
+    {
+        "pk": 12, 
+        "model": "races.routeleg", 
+        "fields": {
+            "distance": "1.5", 
+            "checkpoint_b": 12, 
+            "checkpoint_a": 6
+        }
+    }
+][
     {
         "pk": 1, 
         "model": "races.race", 
@@ -177,10 +233,10 @@
             "checkpoint_start": 5, 
             "routes": [], 
             "measurement_system": "miles", 
-            "max_race_distance": "5.00", 
+            "max_race_distance": "5", 
             "date": "2012-03-03", 
             "num_teams": 150, 
-            "max_leg_distance": "0.90"
+            "max_leg_distance": "0.9"
         }
     }
 ]

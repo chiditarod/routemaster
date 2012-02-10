@@ -13,83 +13,213 @@ Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 
 from races.models import RouteLeg, Race, Checkpoint, RouteLegNode, Route
 
+def getRouteLength(route):
+	total = 0
+	for r in route.routelegnode_set.all():
+		total += r.routeleg.distance
+	return total
+
+
 class RaceBuilder(object):
-    """Primary class for building a race"""
-#    def __init__(self, arg):
-#        super(RaceBuilder, self).__init__()
-#        self.arg = arg
-        
-    def buildRace(self, race):
+
+    def buildRace(self, raceName):
         """main function to build an entire race, given a start and finish point."""
-    
+
+        race = Race.objects.get(name=raceName)
+
         # start building routes using each potential routeleg
-        print 'building race for %s.  finding all checkpoints starting at %s' % (race.name, race.checkpoint_start)
+#        print 'building race for %s.  finding all checkpoints starting at %s' % (race.name, race.checkpoint_start.name)
         potential_legs = RouteLeg.objects.filter(checkpoint_a__name="%s" % race.checkpoint_start.name)  
 
         print 'found %i potential legs' % len(potential_legs)
         
         for routeleg in potential_legs:
-            route = self.buildRoute(race, routeleg)
-            if route:
-                race.routes.append(route)
+            routes = self.buildRoutes(race, routeleg)
+        for r in routes:
+            race.routes.append(r)
 
 
-    def buildRoute(self, race, routeleg, route = None):
-        """docstring for buildRoute"""    
+    def buildRoutes(self, race, routeleg, route = None):
+        """docstring for buildRoutes"""    
+        print 'buildRoutes: %s' % routeleg
+
         # ------------------------------------------
-        # checks of a bad routeleg:
-    
-        print 'buildRoute: %s' % routeleg
-    
+        # checks for an inappropriate routeleg:
+        
         # routeleg distance > max_leg_distance
         if (routeleg.distance > race.max_leg_distance):
-            print "%d length > max leg distance %s" % (routeleg.distance, race.max_leg_distance)
+            print "\tFAIL: %s length > max leg distance %s" % (routeleg.distance, race.max_leg_distance)
             return None
+        else:
+            print "\tPASS: %s length <= max leg distance %s" % (routeleg.distance, race.max_leg_distance)
                 
         # additional operations if this route already has at least one routeleg
         if route:
-            print 'route exists'
+            print 'route exists. depth: %s' % route.routelegs.count()
             
-            # if adding routeleg makes the total distance too far
-            if route.distanceThusFar + routeleg.distance > race.max_race_distance:
-                print "%s will make race > max race distance %d" % (routeleg, race.max_race_distance)
+            # checkpoint_b can't be the starting line
+            print "%s, %s" % (routeleg.checkpoint_b, race.checkpoint_start)
+            if (routeleg.checkpoint_b == race.checkpoint_start):
+                print '\tFAIL: %s is the starting line, that cannot be.' % routeleg.checkpoint_b.name
                 return None
             
             # checkpoint_b = finish, and numcheckpoints+1 != total
             if (routeleg.checkpoint_b == race.checkpoint_finish) and (route.routelegs.count() + 1 != race.checkpoint_qty):
-                print '%s is the finish line, but there is only %i checkpoints so far in this route.' % (routeleg.checkpoint_b.name, len(route.routelegs))
+                print '\tFAIL: %s is the finish line, but there is only %i checkpoints so far in this route.' % (routeleg.checkpoint_b.name, len(route.routelegs))
                 return None
         
+            # if adding routeleg makes the total distance too far
+                #            if route.distance_thus_far() + routeleg.distance > race.max_race_distance:
+                #                print "\tFAIL: %s will make race > max race distance %d" % (routeleg, race.max_race_distance)
+                #                return None
+
             # checkpoint_b already used
-            for r in route.routelegs:
-                print '%s is already in use in this route.' % routeleg.checkpoint_b.name
-                if r.checkpoint_b is routeleg.checkpoint_b:
+            for r in route.routelegnode_set.all():
+                print '\tFAIL: %s is already in use in this route.' % routeleg.checkpoint_b.name
+                if r.routeleg.checkpoint_b is routeleg.checkpoint_b:
                     return None
+
         else:
             # instantiate a new route
             route = Route()
             route.name = 'Route %s' % (race.routes.count() + 1)
             route.checkpoint_start = race.checkpoint_start
             route.checkpoint_finish = race.checkpoint_finish
-            route.valid = False
-            print 'building new route: %s' % route.name
+            route.is_valid = False
+            print '[new route] %s' % route.name
             route.save()
             
         # ---------------------------------------------
-        # all tests pass. what next?
+        # all tests pass. 
 
-        # add this routeleg to our route
-        print 'appending routeleg %s onto our route' % routeleg
+        # build a new routelegnode
+        print '[append] %s' % routeleg
         
-        route.routelegs.add(routeleg)
-
+        node = RouteLegNode()
+        node.parent_route = route
+        node.routeleg = routeleg
+        node.order = route.routelegs.count() + 1
+        node.save()
+        
+        route.routelegnode_set.add(node)
+        route.save()
+        
         # get all potential routelegs with our current checkpoint b as their checkpoint a
-        print 'querying for all routelegs starting with %s' % routeleg.checkpoint_b.name
         potential_legs = RouteLeg.objects.filter(checkpoint_a__name="%s" % routeleg.checkpoint_b.name)  
+        print '[query] routelegs starting with %s: %i' % (routeleg.checkpoint_b.name, potential_legs.count())
     
         # loop through all potential routelegs.  If we get back a route, then return it.
         for r in potential_legs:
-            print 'trying to build route for %s' % r.name
-            route = self.buildRoute(race, r, route)
-            if route is not None:
+            route = self.buildRoutes(race, r, route)
+            if route:
                 return route
+        return None
+
+
+# ========================================================================================================================
+
+    def mungeRace(self, raceName):
+        """main function to build an entire race, given a start and finish point."""
+#        raceName="Chiditarod VII"
+        race = Race.objects.get(name=raceName)
+        # start building routes using each potential routeleg
+        print '[race] %s  [start] %s' % (race.name, race.checkpoint_start.name)
+        legs = RouteLeg.objects.filter(checkpoint_a__name="%s" % race.checkpoint_start.name)  
+        print 'found %i legs' % len(legs)
+        
+        race = self.munge(race, legs)
+        print race
+
+
+    def munge(self, race, legs, route = None):
+
+        # iterate through all legs we were passed.
+        for leg in legs:
+
+            print 'munge: %s' % leg
+            
+            # check for bad distance
+            if (leg.distance > race.max_leg_distance):
+                print "\tFAIL: %s length > max leg distance %s" % (leg.distance, race.max_leg_distance)
+                continue
+            print "\tPASS: %s length <= max leg distance %s" % (leg.distance, race.max_leg_distance)
+
+            # checkpoint_b should never be the starting line
+            if (leg.checkpoint_b == race.checkpoint_start):
+                print '\tFAIL: %s is the starting line, that can never be.' % leg.checkpoint_b.name
+                continue
+            print "\tPASS: %s is not the starting line" % (leg.checkpoint_b.name)
+                
+
+            # additional checks for existing routes
+            if route:
+                print 'route exists. depth: %s' % route.routelegs.count()
+                numlegs = route.routelegs.count()
+                print 's'
+                
+                # checkpoint_b != finish, and numcheckpoints+1 == total qty
+                if (leg.checkpoint_b != race.checkpoint_finish) and (numlegs + 1 == race.checkpoint_qty):
+                    print '\tFAIL: %s is not the finish line, but this route is %i/%i full' % (leg.checkpoint_b.name, numlegs, race.checkpoint_qty)
+                    continue
+                
+                # checkpoint_b = finish, and numcheckpoints+1 != total qty
+                if (leg.checkpoint_b == race.checkpoint_finish) and (numlegs + 1 != race.checkpoint_qty):
+                    print '\tFAIL: %s is the finish line, but this route is only %i/%i full' % (leg.checkpoint_b.name, numlegs, race.checkpoint_qty)
+                    continue
+
+                print 't'
+                # if adding this leg makes the total distance too far
+                if getRouteLength(route) + leg.distance > race.max_race_distance:
+                    print "\tFAIL: %s will make race > max race distance %d" % (leg, race.max_race_distance)
+                    continue
+                print "\tPASS: %s will not make the race > max race distance %d" % (leg, race.max_race_distance)
+
+                print 'u'                
+                # fail if checkpoint_b is already used
+                for r in route.routelegnode_set.all():
+                    if r.routeleg.checkpoint_b == leg.checkpoint_b:
+                        print '\tFAIL: %s is already in use in this route.' % leg.checkpoint_b.name
+                        continue
+                print '\tPASS: %s is not yet in use in this route.' % leg.checkpoint_b.name
+
+
+            # and if a route doesn't exist, make one and move on.
+            else:
+                # build new route
+                route = Route()
+                route.name = 'Route %s' % (race.routes.count() + 1)
+                route.checkpoint_start = race.checkpoint_start
+                route.checkpoint_finish = race.checkpoint_finish
+                route.is_valid = False
+                route.save()
+                print '[new route] %s' % route.name
+
+
+            # if we made it this far, add a RouteLegNode to our routes list
+            node = RouteLegNode()
+            node.parent_route = route
+            node.routeleg = leg
+            node.order = route.routelegs.count() + 1
+            print '[new node] %s [order: %s]' % (node, node.order)
+            node.save()
+
+            route.routelegnode_set.add(node)
+            route.save()
+            
+            # ---------------------------------------------
+            # winning condition.  add this route to our race object
+            if (route.routelegs.count() == race.checkpoint_qty):
+                if (leg.checkpoint_b == race.checkpoint_finish):
+                    print '[ WIN ] %s' % route
+                    race.routes.add(route)
+                    continue
+
+            # ---------------------------------------------
+            # ok, so we didn't win, but we have a leg that's not failing out. 
+            sublegs = RouteLeg.objects.filter(checkpoint_a__name="%s" % leg.checkpoint_b.name)  
+            print '[sublegs] found %i' % len(sublegs)
+
+            race = self.munge(race, sublegs, route)
+    
+        return race
+        
