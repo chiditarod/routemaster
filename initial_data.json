@@ -1,0 +1,186 @@
+[
+    {
+        "pk": 5, 
+        "model": "races.checkpoint", 
+        "fields": {
+            "state_province": "a", 
+            "city": "a", 
+            "name": "Minimonk's Lot", 
+            "capacity_max": 2000, 
+            "lon": "0.00", 
+            "address": "a", 
+            "lat": "0.00", 
+            "capacity_comfortable": 1000
+        }
+    }, 
+    {
+        "pk": 6, 
+        "model": "races.checkpoint", 
+        "fields": {
+            "state_province": "IL", 
+            "city": "Chicago", 
+            "name": "Cobra Lounge", 
+            "capacity_max": 800, 
+            "lon": "0.00", 
+            "address": "Ashland", 
+            "lat": "0.00", 
+            "capacity_comfortable": 600
+        }
+    }, 
+    {
+        "pk": 7, 
+        "model": "races.checkpoint", 
+        "fields": {
+            "state_province": "IL", 
+            "city": "Chicago", 
+            "name": "Nick's Beergarden", 
+            "capacity_max": 1000, 
+            "lon": "0.00", 
+            "address": "Milwaukee", 
+            "lat": "0.00", 
+            "capacity_comfortable": 800
+        }
+    }, 
+    {
+        "pk": 8, 
+        "model": "races.checkpoint", 
+        "fields": {
+            "state_province": "IL", 
+            "city": "Chicago", 
+            "name": "Bottom Lounge", 
+            "capacity_max": 2000, 
+            "lon": "0.00", 
+            "address": "1375 W Lake St.", 
+            "lat": "0.00", 
+            "capacity_comfortable": 1500
+        }
+    }, 
+    {
+        "pk": 9, 
+        "model": "races.checkpoint", 
+        "fields": {
+            "state_province": "IL", 
+            "city": "Chicago", 
+            "name": "5 Star Bar", 
+            "capacity_max": 900, 
+            "lon": "0.00", 
+            "address": "Chicago", 
+            "lat": "0.00", 
+            "capacity_comfortable": 700
+        }
+    }, 
+    {
+        "pk": 10, 
+        "model": "races.checkpoint", 
+        "fields": {
+            "state_province": "IL", 
+            "city": "Chicago", 
+            "name": "Roots Pizza", 
+            "capacity_max": 600, 
+            "lon": "0.00", 
+            "address": "Chicago", 
+            "lat": "0.00", 
+            "capacity_comfortable": 500
+        }
+    }, 
+    {
+        "pk": 11, 
+        "model": "races.checkpoint", 
+        "fields": {
+            "state_province": "IL", 
+            "city": "Chicago", 
+            "name": "Phyllis' Musical Inn", 
+            "capacity_max": 200, 
+            "lon": "0.00", 
+            "address": "1800 W Division", 
+            "lat": "0.00", 
+            "capacity_comfortable": 100
+        }
+    }, 
+    {
+        "pk": 12, 
+        "model": "races.checkpoint", 
+        "fields": {
+            "state_province": "IL", 
+            "city": "Chicago", 
+            "name": "Darkroom", 
+            "capacity_max": 500, 
+            "lon": "0.00", 
+            "address": "Chicago", 
+            "lat": "0.00", 
+            "capacity_comfortable": 300
+        }
+    }, 
+    {
+        "pk": 1, 
+        "model": "races.routeleg", 
+        "fields": {
+            "distance": "0.80", 
+            "checkpoint_b": 6, 
+            "checkpoint_a": 5
+        }
+    }, 
+    {
+        "pk": 2, 
+        "model": "races.routeleg", 
+        "fields": {
+            "distance": "1.40", 
+            "checkpoint_b": 7, 
+            "checkpoint_a": 5
+        }
+    }, 
+    {
+        "pk": 3, 
+        "model": "races.routeleg", 
+        "fields": {
+            "distance": "1.00", 
+            "checkpoint_b": 8, 
+            "checkpoint_a": 5
+        }
+    }, 
+    {
+        "pk": 4, 
+        "model": "races.routeleg", 
+        "fields": {
+            "distance": "1.00", 
+            "checkpoint_b": 9, 
+            "checkpoint_a": 5
+        }
+    }, 
+    {
+        "pk": 5, 
+        "model": "races.routeleg", 
+        "fields": {
+            "distance": "0.50", 
+            "checkpoint_b": 10, 
+            "checkpoint_a": 5
+        }
+    }, 
+    {
+        "pk": 6, 
+        "model": "races.routeleg", 
+        "fields": {
+            "distance": "1.10", 
+            "checkpoint_b": 11, 
+            "checkpoint_a": 5
+        }
+    },
+    {
+        "pk": 1, 
+        "model": "races.race", 
+        "fields": {
+            "checkpoint_qty": 5, 
+            "checkpoint_finish": 8, 
+            "name": "Chiditarod VII", 
+            "url": "", 
+            "num_people_per_team": 5, 
+            "checkpoint_start": 5, 
+            "routes": [], 
+            "measurement_system": "miles", 
+            "max_race_distance": "5.00", 
+            "date": "2012-03-03", 
+            "num_teams": 150, 
+            "max_leg_distance": "0.90"
+        }
+    }
+]
