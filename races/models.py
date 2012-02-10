@@ -3,27 +3,28 @@ from django.db import models
 class Race(models.Model):
     name = models.CharField(max_length=60)
     date = models.DateField()
+    url = models.URLField()
     num_teams = models.IntegerField()
     num_people_per_team = models.IntegerField()
     max_race_distance = models.DecimalField(max_digits=3, decimal_places=2)
     max_leg_distance = models.DecimalField(max_digits=3, decimal_places=2)
+    unified_start_checkpoint = models.BooleanField(default=True)
+    unified_finish_checkpoint = models.BooleanField(default=True)
     checkpoint_qty = models.IntegerField()
-    checkpoint_start = models.ForeignKey('Checkpoint', related_name='checkpoint_start')
-    checkpoint_finish = models.ForeignKey('Checkpoint', related_name='checkpoint_finish')
     routes = models.ManyToManyField('Route')
-    url = models.URLField()
     
     def __unicode__(self):
         return self.name
 
 class Checkpoint(models.Model):
     name = models.CharField(max_length=60)
-    capacity = models.IntegerField()
+    capacity_comfortable = models.IntegerField()
+    capacity_max = models.IntegerField()
     address = models.CharField(max_length=70)
     city = models.CharField(max_length=60)
     state_province = models.CharField(max_length=30)
-#    lat = models.DecimalField(max_digits=10, decimal_places=2, blank=True, default='')
-#    lon = models.DecimalField(max_digits=10, decimal_places=2, blank=True, default='')
+    lat = models.DecimalField(max_digits=10, decimal_places=2, blank=True, default='0')
+    lon = models.DecimalField(max_digits=10, decimal_places=2, blank=True, default='0')
 
     def __unicode__(self):
         return "%s, capacity: %i" % (self.name, self.capacity)
@@ -55,8 +56,8 @@ class Node(models.Model):
 class Route(models.Model):
     name = models.CharField(max_length=60)
     routelegs = models.ManyToManyField('RouteLeg', through='Node')
-    start = models.ForeignKey('Checkpoint', related_name='start_checkpoint')
-    finish = models.ForeignKey('Checkpoint', related_name='end_checkpoint')
+    checkpoint_start = models.ForeignKey('Checkpoint', related_name='checkpoint_start')
+    checkpoint_finish = models.ForeignKey('Checkpoint', related_name='checkpoint_finish')
 
     def __unicode__(self):
         return u"%s (%s ---> %s)" % (self.name, self.start.name, self.finish.name)
