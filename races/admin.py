@@ -6,9 +6,20 @@ from django.contrib import admin
 class RouteLegNodeInline(admin.TabularInline):
     model = RouteLegNode
     extra = 3
-
+    list_per_page = 500
+    
 class RouteAdmin(admin.ModelAdmin):
     inlines = [RouteLegNodeInline]
+    list_per_page = 500
+
+#class RouteLegInline(admin.TabularInline):
+#    model = RouteLeg
+#    
+
+class RouteLegAdmin(admin.ModelAdmin):
+    list_per_page = 500
+    list_display = ('checkpoint_a', 'checkpoint_b', 'distance')
+    list_filter = ('checkpoint_a', 'checkpoint_b', 'distance')
 
 #class RouteInline(admin.TabularInline):
 #    model = Route
@@ -20,7 +31,7 @@ class RouteAdmin(admin.ModelAdmin):
 
 admin.site.register(Checkpoint)
 admin.site.register(RouteLegNode)
-admin.site.register(RouteLeg)
+admin.site.register(RouteLeg, RouteLegAdmin)
 admin.site.register(Route, RouteAdmin)
 #admin.site.register(Route)
 

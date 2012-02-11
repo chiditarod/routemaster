@@ -14,7 +14,8 @@ class Race(models.Model):
     max_leg_distance = models.DecimalField(max_digits=3, decimal_places=2)
     checkpoint_start = models.ForeignKey('Checkpoint', related_name='races_starting_here')
     checkpoint_finish = models.ForeignKey('Checkpoint', related_name='races_finishing_here')
-    checkpoint_qty = models.IntegerField('checkpoints per race')
+    # TODO: Change to route_legs
+    checkpoint_qty = models.IntegerField('Total Legs (checkpoints + finish)')
     routes = models.ManyToManyField('Route', related_name='races', blank=True)
     measurement_system = models.CharField(max_length=5, choices=DISTANCE_CHOICES)
     
@@ -32,7 +33,8 @@ class Checkpoint(models.Model):
     lon = models.DecimalField(max_digits=10, decimal_places=2, blank=True, default='0')
 
     def __unicode__(self):
-        return "%s [ %i, %i ]" % (self.name, self.capacity_comfortable, self.capacity_max)
+#        return "%s [ %i, %i ]" % (self.name, self.capacity_comfortable, self.capacity_max)
+        return "%s" % (self.name)
 
 # Info about the distance between 2 checkpoints
 class RouteLeg(models.Model):
@@ -50,7 +52,7 @@ class RouteLegNode(models.Model):
     order = models.IntegerField()
 
     def __unicode__(self):
-        return "Node %i of route %s: %s --> %s" % (self.order, self.parent_route.name, self.routeleg.checkpoint_a, self.routeleg.checkpoint_b) 
+        return "Node %i of %s: %s --> %s" % (self.order, self.parent_route.name, self.routeleg.checkpoint_a, self.routeleg.checkpoint_b) 
 
 # A Route
 class Route(models.Model):
@@ -61,6 +63,17 @@ class Route(models.Model):
     checkpoint_finish = models.ForeignKey('Checkpoint', related_name='finish_for_route')
     is_valid = models.BooleanField()
 
-    def __unicode__(self):
-        return u"%s (%s ---> %s)" % (self.name, self.checkpoint_start.name, self.checkpoint_finish.name)
+#    def __unicode__(self):
+#        return u"%s (%s ---> %s)" % (self.name, self.checkpoint_start.name, self.checkpoint_finish.name)
 
+
+    def __unicode__(self):
+        o = ''
+        last = ''
+        for r in self.routelegs.all():
+            if r.checkpoint_a.name != last:
+                o += r.checkpoint_a.name
+            o += ' -> ' 
+            o += r.checkpoint_b.name
+            last = r.checkpoint_b.name
+        return u"%s" % o

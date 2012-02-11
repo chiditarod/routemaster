@@ -8,8 +8,8 @@ from ometa import RaceBuilder
 
 def run_race(request):
     r = RaceBuilder()
-    race = r.mungeRace("Chiditarod VII")
-    return HttpResponse(race)
+    (race, output) = r.mungeRace("Chiditarod VII")
+    return output
 
 
 def hello(request):
