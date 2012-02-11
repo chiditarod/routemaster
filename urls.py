@@ -1,6 +1,7 @@
 from django.conf.urls.defaults import *
 
-from routemaster.views import *
+from views import *
+from races.views import *
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
@@ -21,7 +22,10 @@ urlpatterns = patterns('',
 
     # Uncomment the next line to enable the admin:
     (r'^admin/', include(admin.site.urls)),
-    
-    (r'^race/', run_race),
-    
+)
+
+urlpatterns += patterns('races.views',
+    (r'^$', 'index'),
+    (r'^races?/$', 'list_races'),
+    (r'^races/build/', 'build_race'),
 )

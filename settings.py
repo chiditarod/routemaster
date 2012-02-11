@@ -26,8 +26,11 @@ MANAGERS = ADMINS
 # calculated paths for django and the site
 # used as starting points for various other paths
 # from: http://morethanseven.net/2009/02/11/django-settings-tip-setting-relative-paths.html
+# and http://www.ramavadakattu.com/top-10-tips-to-a-new-django-developer
 DJANGO_ROOT = os.path.dirname(os.path.realpath(django.__file__))
-SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
+SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
+MEDIA_ROOT = os.path.join(SITE_ROOT, 'appmedia')
+TEMPLATE_DIRS = ( os.path.join(SITE_ROOT, 'templates'),)
 
 
 DATABASES = {

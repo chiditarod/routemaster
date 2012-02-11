@@ -63,9 +63,11 @@ class Route(models.Model):
     checkpoint_finish = models.ForeignKey('Checkpoint', related_name='finish_for_route')
     is_valid = models.BooleanField()
 
-#    def __unicode__(self):
-#        return u"%s (%s ---> %s)" % (self.name, self.checkpoint_start.name, self.checkpoint_finish.name)
-
+    def getLength(self, route):
+    	total = 0
+    	for r in self.routelegnode_set.all():
+    		total += r.routeleg.distance
+    	return total
 
     def __unicode__(self):
         o = ''
@@ -76,4 +78,6 @@ class Route(models.Model):
             o += ' -> ' 
             o += r.checkpoint_b.name
             last = r.checkpoint_b.name
-        return u"%s" % o
+#        else:
+#            o = "No RouteLegs"
+        return u"%s: %s" % (self.name, o)
