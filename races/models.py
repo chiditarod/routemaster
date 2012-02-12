@@ -94,14 +94,17 @@ class Route(models.Model):
     def __unicode__(self):
         o = ''
         last = ''
-        for r in self.routelegs.all():
-            if r.checkpoint_a.name != last:
-                o += r.checkpoint_a.name
-            o += ' -> ' 
-            o += r.checkpoint_b.name
-            last = r.checkpoint_b.name
-#        else:
-#            o = "No RouteLegs"
+        try:
+            for r in self.routelegs.all():
+                if r.checkpoint_a.name != last:
+                    o += r.checkpoint_a.name
+                o += ' -> ' 
+                o += r.checkpoint_b.name
+                last = r.checkpoint_b.name
+            # else:
+            #    o = "No RouteLegs"
+        except Exception, e:
+            return "No Routelegs"
         return u"%s: %s" % (self.name, o)
         
     def clone(self):
@@ -119,4 +122,17 @@ class Route(models.Model):
             duplicate.routelegnode_set.add(rln)
         duplicate.save()
         return duplicate
+    
+    def hasRoutelegs(self):
+        try:
+            if self.routelegnode_set.count() > 0:
+                return True
+            return False
+        except ValueError, e:
+            return False
 
+    def countRoutelegs(self):
+        try:
+            return self.routelegnode_set.count()
+        except ValueError, e:
+            return 0

@@ -30,7 +30,7 @@ class RaceBuilder(object):
         print "%s%s" % (s, str)
 
     def mungeRace(self, raceName):
-        """main function to build an entire race, given a start and finish point."""
+        """main function to build an entire race, given a start and finish point. calls our recursion."""
         race = Race.objects.get(name=raceName)
         # start building routes using each potential routeleg
         self.ip(0, '[race] %s  [start] %s' % (race.name, race.checkpoint_start.name))
@@ -50,26 +50,30 @@ class RaceBuilder(object):
         x = 0
         y = 0
         
-        # iterate through all legs we were passed.
+        # iterate through all potential legs
         for leg in legs:
             y = y + 1
             
             # reset the route to what is was leading into each new leg
+            self.ip(x,'[route count] %s' % Route.objects.count())
             route = initialRoute
-
+            self.ip(x,'[route count] %s' % Route.objects.count())
+            
+            # make a new route if we weren't passed one via recursion.
             if not route:
                 route = Route()
                 route.name = 'Route %s' % (race.routes.count())
                 route.checkpoint_start = race.checkpoint_start
                 route.checkpoint_finish = race.checkpoint_finish
                 route.is_valid = False
-                route.save()
                 self.ip(x,'[NEW ROUTE] %s' % route.name)
 
-            x = route.routelegs.count()
+            if not route.hasRoutelegs():
+                x = 0
+            else:
+                x = route.routelegs.count()
             self.ip(x,"[munge] %s" % leg)
             self.ip(x,"processing: %s" % route)
-            self.ip(x,"leg %i" % y)
         
             # check for bad distance
             if (leg.distance > race.max_leg_distance):
@@ -86,7 +90,7 @@ class RaceBuilder(object):
                 
             # additional checks when a route exists
             if route:
-                numlegs = route.routelegs.count() 
+                numlegs = route.countRoutelegs() 
                 
                 if (numlegs > race.checkpoint_qty):
                     self.ip(x,'\tERROR: numlegs = %s > %s (checkpoint qty).  Should not happen.' % (numlegs, race.checkpoint_qty + 1))
@@ -128,10 +132,11 @@ class RaceBuilder(object):
             node = RouteLegNode()
             node.parent_route = route
             node.routeleg = leg
-            node.order = route.routelegs.count() + 1
+            node.order = route.countRoutelegs() + 1
             self.ip(x,'[NEW NODE] %s [order: %s]' % (node, node.order))
 
             # add the new node to the route
+            route.save()
             route.routelegnode_set.add(node)
             
             # ---------------------------------------------
@@ -142,12 +147,14 @@ class RaceBuilder(object):
                 # copy our route (and the intermediate models) and save it to the route table.
                 route_copy = route.clone()
                 # associate the route with our race.
+
+                self.ip(x,'\n%s\n' % race.routes.count())
+                self.ip(x,'\n%s\n' % race.routes.all())
+                
                 race.routes.add(route_copy)
                 race.save()
                 
-                self.ip(x, "route copy: %s" % route_copy)    
-                self.ip(x,'\n%s\n' % vars(race))
-                self.ip(x,'\n%s\n' % vars(race.routes))
+                self.ip(x,'\n%s\n' % race.routes.count())
                 self.ip(x,'\n%s\n' % race.routes.all())
                 
                 # slide the highest node off the route
@@ -170,9 +177,11 @@ class RaceBuilder(object):
             self.sliceLatestNode(route, x)
             
             # check to see if our route is length=0. if so, delete it
-            if (route.routelegs.count() == 0):
-                self.ip(x,"Deleting route containing 0 nodes")            
-                Route.objects.get(id=route.pk).delete()
+            if (route.countRoutelegs() == 0):
+                self.ip(x,"Deleting route containing 0 nodes")  
+                # we only have to delete the route if it's not already in the DB.          
+                if route.id is not None:
+                    route.delete()
         
         # return our completed race object.
         self.ip(x,"returning race")            
@@ -181,7 +190,7 @@ class RaceBuilder(object):
 
     def sliceLatestNode(self, route, x):
         try:
-            totalNodes = route.routelegs.count()
+            totalNodes = route.countRoutelegs()
             deleteNode = RouteLegNode.objects.get(parent_route=route, order=totalNodes)
             if deleteNode:
                 self.ip(x, "[SLICE NODE] %s:" % deleteNode)
