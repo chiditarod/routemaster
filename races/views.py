@@ -12,7 +12,6 @@ def build_race(request):
     (race, output) = r.mungeRace("Chiditarod VII")
     return output
 
-
 def index(request):
     return HttpResponse("Index Page")
 

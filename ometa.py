@@ -13,7 +13,8 @@ Copyright (c) 2012 Ometa, Inc. All rights reserved.
 
 from races.models import RouteLeg, Race, Checkpoint, RouteLegNode, Route
 from django.http import HttpResponse
-from copy import deepcopy
+#from copy import deepcopy
+from util.utils import Utils
 
 class RaceBuilder(object):
 
@@ -37,7 +38,7 @@ class RaceBuilder(object):
         self.ip(0, 'found %i legs' % len(legs))
         
         race = self.munge(race, legs)
-        self.ip(0, "num races: %i" % race.routes.count())
+        self.ip(0, "num routes found: %i" % race.routes.count())
         return race, self.output
 
     
@@ -106,7 +107,7 @@ class RaceBuilder(object):
                         self.ip(x,'\tPASS: %s != finish line, route is %i/%i full' % (leg.checkpoint_b.name, numlegs, race.checkpoint_qty))
                             
                 # if adding this leg makes the total distance too far
-                potentialDistance = route.getLength(route) + leg.distance
+                potentialDistance = route.getLength() + leg.distance
                 if potentialDistance > race.max_race_distance:
                     self.ip(x,"\tFAIL: %s distance > max race distance %d" % (potentialDistance, race.max_race_distance))
                     continue
@@ -138,13 +139,13 @@ class RaceBuilder(object):
             # add this route to our race object
             if (route.routelegs.count() == race.checkpoint_qty) and (leg.checkpoint_b == race.checkpoint_finish):
                 self.ip(x,'[ WIN ] %s' % route)
-#                route_copy = deepcopy(route)
-                route_copy = deepcopy(route)
-                self.ip(x, "route copy: %s" % route_copy)
-                route_copy.id = None
-                route_copy.save()
+                # copy our route (and the intermediate models) and save it to the route table.
+                route_copy = route.clone()
+                # associate the route with our race.
                 race.routes.add(route_copy)
+                race.save()
                 
+                self.ip(x, "route copy: %s" % route_copy)    
                 self.ip(x,'\n%s\n' % vars(race))
                 self.ip(x,'\n%s\n' % vars(race.routes))
                 self.ip(x,'\n%s\n' % race.routes.all())
