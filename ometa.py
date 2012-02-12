@@ -29,9 +29,11 @@ class RaceBuilder(object):
         self.output.write("%s%s\n" % (s, str))
         print "%s%s" % (s, str)
 
-    def mungeRace(self, raceName):
+    def mungeRace(self, race_id):
         """main function to build an entire race, given a start and finish point. calls our recursion."""
-        race = Race.objects.get(name=raceName)
+        
+        race = Race.objects.get(id=race_id)
+                    
         # start building routes using each potential routeleg
         self.ip(0, '[race] %s  [start] %s' % (race.name, race.checkpoint_start.name))
         legs = RouteLeg.objects.filter(checkpoint_a__name="%s" % race.checkpoint_start.name)  
@@ -55,9 +57,7 @@ class RaceBuilder(object):
             y = y + 1
             
             # reset the route to what is was leading into each new leg
-            self.ip(x,'[route count] %s' % Route.objects.count())
             route = initialRoute
-            self.ip(x,'[route count] %s' % Route.objects.count())
             
             # make a new route if we weren't passed one via recursion.
             if not route:
@@ -68,12 +68,9 @@ class RaceBuilder(object):
                 route.is_valid = False
                 self.ip(x,'[NEW ROUTE] %s' % route.name)
 
-            if not route.hasRoutelegs():
-                x = 0
-            else:
-                x = route.routelegs.count()
+            x = route.countRoutelegs()
+            self.ip(x,"Current Route: %s" % route)
             self.ip(x,"[munge] %s" % leg)
-            self.ip(x,"processing: %s" % route)
         
             # check for bad distance
             if (leg.distance > race.max_leg_distance):
@@ -136,13 +133,15 @@ class RaceBuilder(object):
             self.ip(x,'[NEW NODE] %s [order: %s]' % (node, node.order))
 
             # add the new node to the route
+            # TODO: check for duplicate first
             route.save()
             route.routelegnode_set.add(node)
             
             # ---------------------------------------------
             # WINNING CONDITION!!!
+            
             # add this route to our race object
-            if (route.routelegs.count() == race.checkpoint_qty) and (leg.checkpoint_b == race.checkpoint_finish):
+            if (route.countRoutelegs() == race.checkpoint_qty) and (leg.checkpoint_b == race.checkpoint_finish):
                 self.ip(x,'[ WIN ] %s' % route)
                 # copy our route (and the intermediate models) and save it to the route table.
                 route_copy = route.clone()
@@ -159,9 +158,12 @@ class RaceBuilder(object):
                 
                 # slide the highest node off the route
                 self.sliceLatestNode(route, x)
+                
             else:
                 # ok, so we didn't win, but we have a leg that's not failing out.  Pursue additional recursion. 
-                if (route.routelegs.count() == race.checkpoint_qty):
+                
+                # i don't think the if below will ever run...
+                if (route.countRoutelegs() == race.checkpoint_qty):
                     self.ip(x,'Route has enough legs.  Not recursing further.')
                 else:
                     sublegs = RouteLeg.objects.filter(checkpoint_a__name="%s" % leg.checkpoint_b.name)  
@@ -179,7 +181,7 @@ class RaceBuilder(object):
             # check to see if our route is length=0. if so, delete it
             if (route.countRoutelegs() == 0):
                 self.ip(x,"Deleting route containing 0 nodes")  
-                # we only have to delete the route if it's not already in the DB.          
+                # we only have to delete the route if it's not already in the DB          
                 if route.id is not None:
                     route.delete()
         

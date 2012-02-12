@@ -27,5 +27,5 @@ urlpatterns = patterns('',
 urlpatterns += patterns('races.views',
     (r'^$', 'index'),
     (r'^races?/$', 'list_races'),
-    (r'^races/build/', 'build_race'),
+    (r'^races/build/(\d+)/$', 'build_race'),
 )

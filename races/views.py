@@ -7,9 +7,9 @@ from ometa import RaceBuilder
 # consult:
 # https://docs.djangoproject.com/en/dev/intro/tutorial03/#philosophy
 
-def build_race(request):
+def build_race(request, race_id):
     r = RaceBuilder()
-    (race, output) = r.mungeRace("Chiditarod VII")
+    (race, output) = r.mungeRace(race_id)
     return output
 
 def index(request):

@@ -74,6 +74,9 @@ class RouteLegNode(models.Model):
     routeleg = models.ForeignKey('RouteLeg')
     order = models.IntegerField()
 
+    class Meta:
+        ordering = ['order']
+
     def __unicode__(self):
         return "Node %i of %s: %s --> %s" % (self.order, self.parent_route.name, self.routeleg.checkpoint_a, self.routeleg.checkpoint_b) 
 
