@@ -110,8 +110,35 @@
             "lat": "0", 
             "capacity_comfortable": 300
         }
-    }
-][
+    }, 
+    {
+        "pk": 13, 
+        "model": "races.checkpoint", 
+        "fields": {
+            "state_province": "IL", 
+            "city": "Chicago", 
+            "name": "Mahoney's", 
+            "capacity_max": 1200, 
+            "lon": "0", 
+            "address": "551 N. Ogden Ave", 
+            "lat": "0", 
+            "capacity_comfortable": 1000
+        }
+    }, 
+    {
+        "pk": 14, 
+        "model": "races.checkpoint", 
+        "fields": {
+            "state_province": "IL", 
+            "city": "Chicago", 
+            "name": "Fifty 50", 
+            "capacity_max": 900, 
+            "lon": "0", 
+            "address": "2047 W Division St", 
+            "lat": "0", 
+            "capacity_comfortable": 750
+        }
+    },
     {
         "pk": 1, 
         "model": "races.routeleg", 
@@ -219,19 +246,645 @@
             "checkpoint_b": 12, 
             "checkpoint_a": 6
         }
-    }
-][
+    }, 
+    {
+        "pk": 13, 
+        "model": "races.routeleg", 
+        "fields": {
+            "distance": "0.8", 
+            "checkpoint_b": 5, 
+            "checkpoint_a": 6
+        }
+    }, 
+    {
+        "pk": 14, 
+        "model": "races.routeleg", 
+        "fields": {
+            "distance": "1.4", 
+            "checkpoint_b": 5, 
+            "checkpoint_a": 7
+        }
+    }, 
+    {
+        "pk": 15, 
+        "model": "races.routeleg", 
+        "fields": {
+            "distance": "1.8", 
+            "checkpoint_b": 6, 
+            "checkpoint_a": 7
+        }
+    }, 
+    {
+        "pk": 16, 
+        "model": "races.routeleg", 
+        "fields": {
+            "distance": "2.1", 
+            "checkpoint_b": 8, 
+            "checkpoint_a": 7
+        }
+    }, 
+    {
+        "pk": 17, 
+        "model": "races.routeleg", 
+        "fields": {
+            "distance": "1.2", 
+            "checkpoint_b": 9, 
+            "checkpoint_a": 7
+        }
+    }, 
+    {
+        "pk": 18, 
+        "model": "races.routeleg", 
+        "fields": {
+            "distance": "1.1", 
+            "checkpoint_b": 10, 
+            "checkpoint_a": 7
+        }
+    }, 
+    {
+        "pk": 19, 
+        "model": "races.routeleg", 
+        "fields": {
+            "distance": "0.5", 
+            "checkpoint_b": 11, 
+            "checkpoint_a": 7
+        }
+    }, 
+    {
+        "pk": 20, 
+        "model": "races.routeleg", 
+        "fields": {
+            "distance": "1.4", 
+            "checkpoint_b": 12, 
+            "checkpoint_a": 7
+        }
+    }, 
+    {
+        "pk": 21, 
+        "model": "races.routeleg", 
+        "fields": {
+            "distance": "1", 
+            "checkpoint_b": 5, 
+            "checkpoint_a": 9
+        }
+    }, 
+    {
+        "pk": 22, 
+        "model": "races.routeleg", 
+        "fields": {
+            "distance": "0.9", 
+            "checkpoint_b": 6, 
+            "checkpoint_a": 9
+        }
+    }, 
+    {
+        "pk": 23, 
+        "model": "races.routeleg", 
+        "fields": {
+            "distance": "1.2", 
+            "checkpoint_b": 7, 
+            "checkpoint_a": 9
+        }
+    }, 
+    {
+        "pk": 24, 
+        "model": "races.routeleg", 
+        "fields": {
+            "distance": "0.6", 
+            "checkpoint_b": 10, 
+            "checkpoint_a": 9
+        }
+    }, 
+    {
+        "pk": 25, 
+        "model": "races.routeleg", 
+        "fields": {
+            "distance": "1", 
+            "checkpoint_b": 11, 
+            "checkpoint_a": 9
+        }
+    }, 
+    {
+        "pk": 26, 
+        "model": "races.routeleg", 
+        "fields": {
+            "distance": "1", 
+            "checkpoint_b": 12, 
+            "checkpoint_a": 9
+        }
+    }, 
+    {
+        "pk": 27, 
+        "model": "races.routeleg", 
+        "fields": {
+            "distance": "0.9", 
+            "checkpoint_b": 8, 
+            "checkpoint_a": 9
+        }
+    }, 
+    {
+        "pk": 28, 
+        "model": "races.routeleg", 
+        "fields": {
+            "distance": "0.8", 
+            "checkpoint_b": 12, 
+            "checkpoint_a": 5
+        }
+    }, 
+    {
+        "pk": 29, 
+        "model": "races.routeleg", 
+        "fields": {
+            "distance": "0.8", 
+            "checkpoint_b": 5, 
+            "checkpoint_a": 12
+        }
+    }, 
+    {
+        "pk": 30, 
+        "model": "races.routeleg", 
+        "fields": {
+            "distance": "1.5", 
+            "checkpoint_b": 6, 
+            "checkpoint_a": 12
+        }
+    }, 
+    {
+        "pk": 31, 
+        "model": "races.routeleg", 
+        "fields": {
+            "distance": "1.4", 
+            "checkpoint_b": 7, 
+            "checkpoint_a": 12
+        }
+    }, 
+    {
+        "pk": 32, 
+        "model": "races.routeleg", 
+        "fields": {
+            "distance": "1.8", 
+            "checkpoint_b": 8, 
+            "checkpoint_a": 12
+        }
+    }, 
+    {
+        "pk": 33, 
+        "model": "races.routeleg", 
+        "fields": {
+            "distance": "1", 
+            "checkpoint_b": 9, 
+            "checkpoint_a": 12
+        }
+    }, 
+    {
+        "pk": 34, 
+        "model": "races.routeleg", 
+        "fields": {
+            "distance": "0.4", 
+            "checkpoint_b": 10, 
+            "checkpoint_a": 12
+        }
+    }, 
+    {
+        "pk": 35, 
+        "model": "races.routeleg", 
+        "fields": {
+            "distance": "1", 
+            "checkpoint_b": 11, 
+            "checkpoint_a": 12
+        }
+    }, 
+    {
+        "pk": 36, 
+        "model": "races.routeleg", 
+        "fields": {
+            "distance": "0.4", 
+            "checkpoint_b": 12, 
+            "checkpoint_a": 10
+        }
+    }, 
+    {
+        "pk": 37, 
+        "model": "races.routeleg", 
+        "fields": {
+            "distance": "0.6", 
+            "checkpoint_b": 9, 
+            "checkpoint_a": 10
+        }
+    }, 
+    {
+        "pk": 38, 
+        "model": "races.routeleg", 
+        "fields": {
+            "distance": "1.1", 
+            "checkpoint_b": 7, 
+            "checkpoint_a": 10
+        }
+    }, 
+    {
+        "pk": 39, 
+        "model": "races.routeleg", 
+        "fields": {
+            "distance": "1.1", 
+            "checkpoint_b": 6, 
+            "checkpoint_a": 10
+        }
+    }, 
+    {
+        "pk": 40, 
+        "model": "races.routeleg", 
+        "fields": {
+            "distance": "0.4", 
+            "checkpoint_b": 5, 
+            "checkpoint_a": 10
+        }
+    }, 
+    {
+        "pk": 41, 
+        "model": "races.routeleg", 
+        "fields": {
+            "distance": "1.4", 
+            "checkpoint_b": 8, 
+            "checkpoint_a": 10
+        }
+    }, 
+    {
+        "pk": 42, 
+        "model": "races.routeleg", 
+        "fields": {
+            "distance": "0.7", 
+            "checkpoint_b": 11, 
+            "checkpoint_a": 10
+        }
+    }, 
+    {
+        "pk": 43, 
+        "model": "races.routeleg", 
+        "fields": {
+            "distance": "1.2", 
+            "checkpoint_b": 13, 
+            "checkpoint_a": 10
+        }
+    }, 
+    {
+        "pk": 44, 
+        "model": "races.routeleg", 
+        "fields": {
+            "distance": "0.6", 
+            "checkpoint_b": 14, 
+            "checkpoint_a": 10
+        }
+    }, 
+    {
+        "pk": 45, 
+        "model": "races.routeleg", 
+        "fields": {
+            "distance": "0.7", 
+            "checkpoint_b": 10, 
+            "checkpoint_a": 11
+        }
+    }, 
+    {
+        "pk": 46, 
+        "model": "races.routeleg", 
+        "fields": {
+            "distance": "1", 
+            "checkpoint_b": 12, 
+            "checkpoint_a": 11
+        }
+    }, 
+    {
+        "pk": 47, 
+        "model": "races.routeleg", 
+        "fields": {
+            "distance": "1", 
+            "checkpoint_b": 9, 
+            "checkpoint_a": 11
+        }
+    }, 
+    {
+        "pk": 48, 
+        "model": "races.routeleg", 
+        "fields": {
+            "distance": "0.5", 
+            "checkpoint_b": 7, 
+            "checkpoint_a": 11
+        }
+    }, 
+    {
+        "pk": 49, 
+        "model": "races.routeleg", 
+        "fields": {
+            "distance": "1.4", 
+            "checkpoint_b": 6, 
+            "checkpoint_a": 11
+        }
+    }, 
+    {
+        "pk": 50, 
+        "model": "races.routeleg", 
+        "fields": {
+            "distance": "1.1", 
+            "checkpoint_b": 5, 
+            "checkpoint_a": 11
+        }
+    }, 
+    {
+        "pk": 51, 
+        "model": "races.routeleg", 
+        "fields": {
+            "distance": "1.8", 
+            "checkpoint_b": 8, 
+            "checkpoint_a": 11
+        }
+    }, 
+    {
+        "pk": 52, 
+        "model": "races.routeleg", 
+        "fields": {
+            "distance": "0.3", 
+            "checkpoint_b": 14, 
+            "checkpoint_a": 11
+        }
+    }, 
+    {
+        "pk": 53, 
+        "model": "races.routeleg", 
+        "fields": {
+            "distance": "1.4", 
+            "checkpoint_b": 13, 
+            "checkpoint_a": 11
+        }
+    }, 
+    {
+        "pk": 54, 
+        "model": "races.routeleg", 
+        "fields": {
+            "distance": "0.7", 
+            "checkpoint_b": 14, 
+            "checkpoint_a": 12
+        }
+    }, 
+    {
+        "pk": 55, 
+        "model": "races.routeleg", 
+        "fields": {
+            "distance": "1.5", 
+            "checkpoint_b": 13, 
+            "checkpoint_a": 12
+        }
+    }, 
+    {
+        "pk": 56, 
+        "model": "races.routeleg", 
+        "fields": {
+            "distance": "1.1", 
+            "checkpoint_b": 14, 
+            "checkpoint_a": 5
+        }
+    }, 
+    {
+        "pk": 57, 
+        "model": "races.routeleg", 
+        "fields": {
+            "distance": "1", 
+            "checkpoint_b": 13, 
+            "checkpoint_a": 5
+        }
+    }, 
+    {
+        "pk": 58, 
+        "model": "races.routeleg", 
+        "fields": {
+            "distance": "0.5", 
+            "checkpoint_b": 13, 
+            "checkpoint_a": 9
+        }
+    }, 
+    {
+        "pk": 59, 
+        "model": "races.routeleg", 
+        "fields": {
+            "distance": "1.2", 
+            "checkpoint_b": 14, 
+            "checkpoint_a": 9
+        }
+    }, 
+    {
+        "pk": 60, 
+        "model": "races.routeleg", 
+        "fields": {
+            "distance": "0.6", 
+            "checkpoint_b": 14, 
+            "checkpoint_a": 7
+        }
+    }, 
+    {
+        "pk": 61, 
+        "model": "races.routeleg", 
+        "fields": {
+            "distance": "1.7", 
+            "checkpoint_b": 13, 
+            "checkpoint_a": 7
+        }
+    }, 
+    {
+        "pk": 62, 
+        "model": "races.routeleg", 
+        "fields": {
+            "distance": "0.8", 
+            "checkpoint_b": 13, 
+            "checkpoint_a": 6
+        }
+    }, 
+    {
+        "pk": 63, 
+        "model": "races.routeleg", 
+        "fields": {
+            "distance": "1.7", 
+            "checkpoint_b": 14, 
+            "checkpoint_a": 6
+        }
+    }, 
+    {
+        "pk": 64, 
+        "model": "races.routeleg", 
+        "fields": {
+            "distance": "1.1", 
+            "checkpoint_b": 5, 
+            "checkpoint_a": 14
+        }
+    }, 
+    {
+        "pk": 65, 
+        "model": "races.routeleg", 
+        "fields": {
+            "distance": "1.7", 
+            "checkpoint_b": 6, 
+            "checkpoint_a": 14
+        }
+    }, 
+    {
+        "pk": 66, 
+        "model": "races.routeleg", 
+        "fields": {
+            "distance": "0.6", 
+            "checkpoint_b": 7, 
+            "checkpoint_a": 14
+        }
+    }, 
+    {
+        "pk": 67, 
+        "model": "races.routeleg", 
+        "fields": {
+            "distance": "1.2", 
+            "checkpoint_b": 9, 
+            "checkpoint_a": 14
+        }
+    }, 
+    {
+        "pk": 68, 
+        "model": "races.routeleg", 
+        "fields": {
+            "distance": "0.6", 
+            "checkpoint_b": 10, 
+            "checkpoint_a": 14
+        }
+    }, 
+    {
+        "pk": 69, 
+        "model": "races.routeleg", 
+        "fields": {
+            "distance": "0.3", 
+            "checkpoint_b": 11, 
+            "checkpoint_a": 14
+        }
+    }, 
+    {
+        "pk": 70, 
+        "model": "races.routeleg", 
+        "fields": {
+            "distance": "0.7", 
+            "checkpoint_b": 12, 
+            "checkpoint_a": 14
+        }
+    }, 
+    {
+        "pk": 71, 
+        "model": "races.routeleg", 
+        "fields": {
+            "distance": "1", 
+            "checkpoint_b": 5, 
+            "checkpoint_a": 13
+        }
+    }, 
+    {
+        "pk": 72, 
+        "model": "races.routeleg", 
+        "fields": {
+            "distance": "0.8", 
+            "checkpoint_b": 6, 
+            "checkpoint_a": 13
+        }
+    }, 
+    {
+        "pk": 73, 
+        "model": "races.routeleg", 
+        "fields": {
+            "distance": "1.7", 
+            "checkpoint_b": 7, 
+            "checkpoint_a": 13
+        }
+    }, 
+    {
+        "pk": 74, 
+        "model": "races.routeleg", 
+        "fields": {
+            "distance": "0.5", 
+            "checkpoint_b": 9, 
+            "checkpoint_a": 13
+        }
+    }, 
+    {
+        "pk": 75, 
+        "model": "races.routeleg", 
+        "fields": {
+            "distance": "1.2", 
+            "checkpoint_b": 10, 
+            "checkpoint_a": 13
+        }
+    }, 
+    {
+        "pk": 76, 
+        "model": "races.routeleg", 
+        "fields": {
+            "distance": "1.4", 
+            "checkpoint_b": 11, 
+            "checkpoint_a": 13
+        }
+    }, 
+    {
+        "pk": 77, 
+        "model": "races.routeleg", 
+        "fields": {
+            "distance": "1.5", 
+            "checkpoint_b": 12, 
+            "checkpoint_a": 13
+        }
+    }, 
+    {
+        "pk": 78, 
+        "model": "races.routeleg", 
+        "fields": {
+            "distance": "2", 
+            "checkpoint_b": 8, 
+            "checkpoint_a": 14
+        }
+    }, 
+    {
+        "pk": 79, 
+        "model": "races.routeleg", 
+        "fields": {
+            "distance": "1.6", 
+            "checkpoint_b": 13, 
+            "checkpoint_a": 14
+        }
+    }, 
+    {
+        "pk": 80, 
+        "model": "races.routeleg", 
+        "fields": {
+            "distance": "1.6", 
+            "checkpoint_b": 14, 
+            "checkpoint_a": 13
+        }
+    }, 
+    {
+        "pk": 81, 
+        "model": "races.routeleg", 
+        "fields": {
+            "distance": "0.6", 
+            "checkpoint_b": 8, 
+            "checkpoint_a": 13
+        }
+    },
     {
         "pk": 1, 
         "model": "races.race", 
         "fields": {
-            "checkpoint_qty": 5, 
+            "checkpoint_qty": 6, 
             "checkpoint_finish": 8, 
             "name": "Chiditarod VII", 
             "url": "", 
             "num_people_per_team": 5, 
             "checkpoint_start": 5, 
-            "routes": [], 
+            "routes": [
+                2, 
+                3, 
+                4, 
+                5, 
+                6
+            ], 
             "measurement_system": "miles", 
             "max_race_distance": "5", 
             "date": "2012-03-03", 
