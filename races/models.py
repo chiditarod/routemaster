@@ -34,6 +34,7 @@ class Race(models.Model):
     url = models.URLField(blank=True)
     num_teams = models.IntegerField()
     num_people_per_team = models.IntegerField()
+    min_race_distance = models.DecimalField(max_digits=3, decimal_places=2)
     max_race_distance = models.DecimalField(max_digits=3, decimal_places=2)
     max_leg_distance = models.DecimalField(max_digits=3, decimal_places=2)
     checkpoint_start = models.ForeignKey('Checkpoint', related_name='races_starting_here')
@@ -108,7 +109,7 @@ class Route(models.Model):
             #    o = "No RouteLegs"
         except Exception, e:
             return "No Routelegs"
-        return u"%s: %s" % (self.name, o)
+        return u"[%s] %s" % (self.getLength(), o)
         
     def clone(self):
         """Return an identical copy of the instance with a new ID."""

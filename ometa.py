@@ -29,7 +29,7 @@ class RaceBuilder(object):
         self.output.write("%s%s\n" % (s, str))
         print "%s%s" % (s, str)
 
-    def mungeRace(self, race_id):
+    def buildRoutesForRace(self, race_id):
         """main function to build an entire race, given a start and finish point. calls our recursion."""
         
         race = Race.objects.get(id=race_id)
@@ -39,12 +39,12 @@ class RaceBuilder(object):
         legs = RouteLeg.objects.filter(checkpoint_a__name="%s" % race.checkpoint_start.name)  
         self.ip(0, 'found %i legs' % len(legs))
         
-        race = self.munge(race, legs)
+        race = self.buildRoute(race, legs)
         self.ip(0, "num routes found: %i" % race.routes.count())
         return race, self.output
 
     
-    def munge(self, race, legs, route = None):
+    def buildRoute(self, race, legs, route = None):
         """primary recursive function"""
         
         # capture the route as-is before trying to add on new legs
@@ -69,8 +69,7 @@ class RaceBuilder(object):
                 self.ip(x,'[NEW ROUTE] %s' % route.name)
 
             x = route.countRoutelegs()
-            self.ip(x,"Current Route: %s" % route)
-            self.ip(x,"[munge] %s" % leg)
+            self.ip(x,"Trying %s for route: %s" % (leg, route))
         
             # check for bad distance
             if (leg.distance > race.max_leg_distance):
@@ -110,9 +109,9 @@ class RaceBuilder(object):
                 # if adding this leg makes the total distance too far
                 potentialDistance = route.getLength() + leg.distance
                 if potentialDistance > race.max_race_distance:
-                    self.ip(x,"\tFAIL: %s distance > max race distance %d" % (potentialDistance, race.max_race_distance))
+                    self.ip(x,"\tFAIL: %s distance > max race distance %s" % (potentialDistance, race.max_race_distance))
                     continue
-                self.ip(x,"\tPASS: %s distance < max race distance %d" % (potentialDistance, race.max_race_distance))
+                self.ip(x,"\tPASS: %s distance < max race distance %s" % (potentialDistance, race.max_race_distance))
                 
                 # fail if checkpoint_b is already used
                 bad=False
@@ -140,23 +139,22 @@ class RaceBuilder(object):
             # ---------------------------------------------
             # WINNING CONDITION!!!
             
-            # add this route to our race object
+            # these are the conditions for a winning route.  additional tests are applied within.
             if (route.countRoutelegs() == race.checkpoint_qty) and (leg.checkpoint_b == race.checkpoint_finish):
-                self.ip(x,'[ WIN ] %s' % route)
-                # copy our route (and the intermediate models) and save it to the route table.
-                route_copy = route.clone()
-                # associate the route with our race.
-
-                self.ip(x,'\n%s\n' % race.routes.count())
-                self.ip(x,'\n%s\n' % race.routes.all())
                 
-                race.routes.add(route_copy)
-                race.save()
-                
-                self.ip(x,'\n%s\n' % race.routes.count())
-                self.ip(x,'\n%s\n' % race.routes.all())
-                
-                # slide the highest node off the route
+                # additional tests that only apply to a completed route
+                if route.getLength() < race.min_race_distance:
+                    self.ip(x,'\tFAIL: %s distance < min race distance %s' % (route.getLength(), race.min_race_distance))
+                else:
+                    # we're good.  Save.
+                    self.ip(x,'[ WIN ] %s' % route)
+                    # copy our route (and the intermediate models) and save it to the route table.
+                    route_copy = route.clone()
+            
+                    race.routes.add(route_copy)
+                    race.save()
+                                
+                # slide the highest node off the route, regardless of whether or not we saved it
                 self.sliceLatestNode(route, x)
                 
             else:
@@ -169,7 +167,7 @@ class RaceBuilder(object):
                     sublegs = RouteLeg.objects.filter(checkpoint_a__name="%s" % leg.checkpoint_b.name)  
                     self.ip(x,'[sublegs] found %i' % len(sublegs))
                     # recurrrrrsion!
-                    race = self.munge(race, sublegs, route)
+                    race = self.buildRoute(race, sublegs, route)
                 
 
         # ROUTE FAIL.  Remove the most recent node and move on.    

@@ -886,10 +886,11 @@
                 6
             ], 
             "measurement_system": "miles", 
+            "min_race_distance": "3", 
             "max_race_distance": "5", 
             "date": "2012-03-03", 
             "num_teams": 150, 
-            "max_leg_distance": "0.9"
+            "max_leg_distance": "1.0"
         }
     }
 ]

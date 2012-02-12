@@ -9,7 +9,7 @@ from ometa import RaceBuilder
 
 def build_race(request, race_id):
     r = RaceBuilder()
-    (race, output) = r.mungeRace(race_id)
+    (race, output) = r.buildRoutesForRace(race_id)
     return output
 
 def index(request):
