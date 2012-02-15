@@ -1,0 +1,13 @@
+{% if race_list %}
+	<ul>
+		{% for race in race_list %}
+			<li>
+				<a href="/races/{{ race.id }}/">{{ race.name }}</a><br/>
+				<a href="/races/build/{{ race.id }}/">Build Routes</a>
+			</li>
+		{% endfor %}
+	</ul>
+{% else %}
+	<p>No races are available</p>
+{% endif %}
+

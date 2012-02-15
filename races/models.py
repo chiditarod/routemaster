@@ -41,11 +41,16 @@ class Race(models.Model):
     checkpoint_finish = models.ForeignKey('Checkpoint', related_name='races_finishing_here')
     # TODO: Change to route_legs
     checkpoint_qty = models.IntegerField('Total Legs (checkpoints + finish)')
-    routes = models.ManyToManyField('Route', related_name='races', blank=True)
     measurement_system = models.CharField(max_length=5, choices=DISTANCE_CHOICES)
     
     def __unicode__(self):
         return "%s [ %s ==> %s ]" % (self.name, self.checkpoint_start.name, self.checkpoint_finish.name)
+
+#    def getroutes(self):
+#        print self.routes.
+#        print Route.objects.filter(races=self).all()
+#        return Route.objects.filter(races=self).all()
+    
 
 class Checkpoint(models.Model):
     name = models.CharField(max_length=60)
@@ -84,6 +89,8 @@ class RouteLegNode(models.Model):
 class Route(models.Model):
     """Route Model"""
     name = models.CharField(max_length=60)
+    race = models.ForeignKey('Race', related_name='routes')
+    routes = models.ManyToManyField('Route', related_name='races', blank=True)
     routelegs = models.ManyToManyField('RouteLeg', through='RouteLegNode', related_name='routelegs')
     checkpoint_start = models.ForeignKey('Checkpoint', related_name='start_for_route')
     checkpoint_finish = models.ForeignKey('Checkpoint', related_name='finish_for_route')
@@ -108,7 +115,7 @@ class Route(models.Model):
             # else:
             #    o = "No RouteLegs"
         except Exception, e:
-            return "No Routelegs"
+            return "Exception thrown!"
         return u"[%s] %s" % (self.getLength(), o)
         
     def clone(self):

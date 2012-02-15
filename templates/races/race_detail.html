@@ -1,0 +1,30 @@
+{% if error %}
+	<div class="error">{{error}}</div>
+{% endif %}
+
+{% if not race %}
+	<p>Problem getting race for race_id: {{race_id}}</p>
+{% else %}
+	<h1>Race: {{race.name}}</h1>
+	<h2>From {{race.checkpoint_start.name}} to {{race.checkpoint_finish.name}}</h2>
+
+	<table>
+		<tr><td>id / pk</td><td>{{race.id}} / {{race.pk}}</td></tr>
+		<tr><td>Date</td><td>{{race.date}}</td></tr>
+		<tr><td>URL</td><td>{{race.url}}</td></tr>
+		<tr><td>Number of Teams</td><td>{{race.num_teams}}</td></tr>
+		<tr><td>People per Team</td><td>{{race.num_people_per_team}}</td></tr>
+		<tr><td>Min Race Distance</td><td>{{race.min_race_distance}} {{race.measurement_system}}</td></tr>
+		<tr><td>Max Race Distance</td><td>{{race.max_race_distance}} {{race.measurement_system}}</td></tr>
+		<tr><td>Max Leg Distance</td><td>{{race.max_leg_distance}} {{race.measurement_system}}</td></tr>
+		<tr><td>Legs</td><td>{{race.checkpoint_qty}}</tr>
+	</table>
+	
+	<h3>Routes</h3>
+	{% for r in race.getroutes %}
+		{{r.name}}
+	{% endfor %}
+	
+{% endif %}
+	
+

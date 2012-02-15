@@ -1,7 +1,10 @@
 from django.template import Context, loader
 from django.http import HttpResponse
-from races.models import Race
+from django.shortcuts import render_to_response
 
+
+from races.models import Race
+# TODO: move this into the race app
 from ometa import RaceBuilder
 
 # consult:
@@ -24,3 +27,15 @@ def list_races(request):
     return HttpResponse(t.render(c))
     # shortcut: return render_to_response('races/index.html', {'race_list': race_list})
 
+
+def race_detail(request, race_id):
+    error = None
+    try:
+        race = Race.objects.get(id=race_id)
+        if not race:
+            error = 'notfound'
+            return render_to_response('races/race_detail.html', {'error': error, 'race_id': race_id})
+        else:
+            return render_to_response('races/race_detail.html', {'race': race})
+    except Exception, e:
+        raise e

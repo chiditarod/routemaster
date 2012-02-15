@@ -132,7 +132,9 @@ class RaceBuilder(object):
             self.ip(x,'[NEW NODE] %s [order: %s]' % (node, node.order))
 
             # add the new node to the route
-            # TODO: check for duplicate first
+            # TODO: check for duplicate first.  see:
+            #   https://docs.djangoproject.com/en/1.2/topics/db/queries/#query-expressions
+            #   http://stackoverflow.com/questions/2055626/filter-many-to-many-relation-in-django
             route.save()
             route.routelegnode_set.add(node)
             
