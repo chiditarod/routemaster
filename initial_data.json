@@ -10,7 +10,7 @@
             "lon": "0", 
             "address": "a", 
             "lat": "0", 
-            "capacity_comfortable": 1000
+            "capacity_comfortable": 1500
         }
     }, 
     {
@@ -20,11 +20,11 @@
             "state_province": "IL", 
             "city": "Chicago", 
             "name": "Cobra Lounge", 
-            "capacity_max": 800, 
+            "capacity_max": 400, 
             "lon": "0", 
             "address": "Ashland", 
             "lat": "0", 
-            "capacity_comfortable": 600
+            "capacity_comfortable": 300
         }
     }, 
     {
@@ -34,11 +34,11 @@
             "state_province": "IL", 
             "city": "Chicago", 
             "name": "Nick's Beergarden", 
-            "capacity_max": 1000, 
+            "capacity_max": 300, 
             "lon": "0", 
             "address": "Milwaukee", 
             "lat": "0", 
-            "capacity_comfortable": 800
+            "capacity_comfortable": 286
         }
     }, 
     {
@@ -62,11 +62,11 @@
             "state_province": "IL", 
             "city": "Chicago", 
             "name": "5 Star Bar", 
-            "capacity_max": 900, 
+            "capacity_max": 190, 
             "lon": "0", 
             "address": "Chicago", 
             "lat": "0", 
-            "capacity_comfortable": 700
+            "capacity_comfortable": 156
         }
     }, 
     {
@@ -76,11 +76,11 @@
             "state_province": "IL", 
             "city": "Chicago", 
             "name": "Roots Pizza", 
-            "capacity_max": 600, 
+            "capacity_max": 200, 
             "lon": "0", 
             "address": "Chicago", 
             "lat": "0", 
-            "capacity_comfortable": 500
+            "capacity_comfortable": 200
         }
     }, 
     {
@@ -104,11 +104,11 @@
             "state_province": "IL", 
             "city": "Chicago", 
             "name": "Darkroom", 
-            "capacity_max": 500, 
+            "capacity_max": 350, 
             "lon": "0", 
             "address": "Chicago", 
             "lat": "0", 
-            "capacity_comfortable": 300
+            "capacity_comfortable": 220
         }
     }, 
     {
@@ -118,11 +118,11 @@
             "state_province": "IL", 
             "city": "Chicago", 
             "name": "Mahoney's", 
-            "capacity_max": 1200, 
+            "capacity_max": 300, 
             "lon": "0", 
             "address": "551 N. Ogden Ave", 
             "lat": "0", 
-            "capacity_comfortable": 1000
+            "capacity_comfortable": 300
         }
     }, 
     {
@@ -132,11 +132,11 @@
             "state_province": "IL", 
             "city": "Chicago", 
             "name": "Fifty 50", 
-            "capacity_max": 900, 
+            "capacity_max": 300, 
             "lon": "0", 
             "address": "2047 W Division St", 
             "lat": "0", 
-            "capacity_comfortable": 750
+            "capacity_comfortable": 300
         }
     },
     {
