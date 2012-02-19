@@ -2,8 +2,11 @@
 	<ul>
 		{% for race in race_list %}
 			<li>
-				<a href="/races/{{ race.id }}/">{{ race.name }}</a><br/>
-				<a href="/races/build/{{ race.id }}/">Build Routes</a>
+				<b><a href="/races/{{ race.id }}/">{{ race.name }}</a></b>
+				<ul>
+					<li><a href="/races/build/{{ race.id }}/">Build Routes</a></li>
+					<li><a href="/races/add-route-capacities/{{ race.id }}/">Calculate Route Capacities</a></li>
+				</ul>
 			</li>
 		{% endfor %}
 	</ul>
