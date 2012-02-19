@@ -25,6 +25,7 @@ class CloneableModel(models.Model):
                 destination.add(item)
         return duplicate
 
+
 class Race(models.Model):
     DISTANCE_CHOICES = (
         (u'miles', u'Miles'),
@@ -64,6 +65,7 @@ class Checkpoint(models.Model):
     def __unicode__(self):
         return "%s" % (self.name)
 
+
 class RouteLeg(models.Model):
     """Model containing the distance between 2 checkpoints"""
     checkpoint_a = models.ForeignKey('Checkpoint', related_name='from_checkpoint')
@@ -72,6 +74,7 @@ class RouteLeg(models.Model):
     
     def __unicode__(self):
         return u'[ %s ] %s -> %s' % (float(self.distance), self.checkpoint_a.name, self.checkpoint_b.name)
+
 
 class RouteLegNode(models.Model):
     """Intermediate Model defining the relationship between Routes and Routelegs."""
@@ -85,6 +88,7 @@ class RouteLegNode(models.Model):
     def __unicode__(self):
         return "Node %i of %s: %s --> %s" % (self.order, self.parent_route.name, self.routeleg.checkpoint_a, self.routeleg.checkpoint_b) 
 
+
 class Route(models.Model):
     """Route Model"""
     name = models.CharField(max_length=60)
@@ -94,7 +98,7 @@ class Route(models.Model):
     checkpoint_finish = models.ForeignKey('Checkpoint', related_name='finish_for_route')
     capacity_comfortable = models.IntegerField(blank=True, default=settings.DEFAULT_CAPACITY_COMFORTABLE)
     capacity_max = models.IntegerField(blank=True, default=settings.DEFAULT_CAPACITY_MAXIMUM)
-    is_valid = models.BooleanField()
+    #is_valid = models.BooleanField()
         
     def getLength(self):
         """return total length of route"""

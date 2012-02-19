@@ -65,7 +65,7 @@ class RaceBuilder(object):
                 route.race = race
                 route.checkpoint_start = race.checkpoint_start
                 route.checkpoint_finish = race.checkpoint_finish
-                route.is_valid = False
+#                route.is_valid = False
                 self.ip(x,'[NEW ROUTE] %s' % route.name)
 
             x = route.countRoutelegs()
@@ -203,6 +203,7 @@ class RaceBuilder(object):
             
     
     def addCapacityToRoute(self, route):
+        """Go through each checkpoint in a route and calculate the max and comfortable capacity for the entire route."""
         capComfortable = settings.DEFAULT_CAPACITY_COMFORTABLE
         capMaximum = settings.DEFAULT_CAPACITY_MAXIMUM
         """Figures out the comfortable and maximum capacity for each route by looking at each checkpoint"""
@@ -218,14 +219,71 @@ class RaceBuilder(object):
         route.save()
         return capComfortable, capMaximum
         
+        
     def addRouteCapacities(self, race):
+        """Add capacities for each route stored in a race."""
         count = 0
         for r in race.routes.all():
             self.addCapacityToRoute(r)
             count += 1
         return count
     
-            
     
+    def findUniqueRoutes(self, race, repeat_qty = 0):
+        """Choose the routes that don't overlap any checkpoints in each respective routeleg position."""
+        used_routes = []
+        deferred_routes = []
+        positions = race.checkpoint_qty - 1 # subtract one so we don't include the finish line.
+        a = list(list() for i in range(positions))
+        
+        # iterate through all routes in the race
+        for route in race.routes.all():
+
+            print "processing route id: %s" % route.id
+
+            ok = True
+            
+            # temp list b, a list of lists
+            b = list(list() for i in range(positions))
+            
+            # iterate through all checkpoints in each route
+            for x, leg in enumerate(route.routelegs.all()):
+                
+                # skip the final routeleg (as we aren't processing the finish line, which is always the same)
+                if (x == positions):
+                    break
+                    
+                print "a[%s] is: %s" % (x, a[x])
+                print "leg is: %s" % leg
+                
+                if leg.checkpoint_b not in a[x]:
+                    print "checkpoint %s is not yet used as checkpoint %s.  Add it to our temp list, b\n" % (leg.checkpoint_b, x)
+                    b[x].append(leg.checkpoint_b)
+                else:
+                    print "checkpoint %s is already used as checkpoint %s.  defer entire route\n" % (leg.checkpoint_b, x)
+                    deferred_routes.append(route)
+                    ok = False
+                    break
+            
+            # if we made it this far, add our temp list b to our master list a
+            # TODO: there must be a cleaner way of doing this other than leg[0]
+            if ok:
+                for x, checkpoint in enumerate(b):
+                    if len(checkpoint):
+                        print "appending: %s %s\n" % (x, checkpoint)
+                        a[x].append(checkpoint[0])
+            
+                # add this route to our used route list.
+                used_routes.append(route)
+            
+        print ""
+        for i in a:
+            print "%s" % i
+        print ""
+            
+        print "used_routes: %s" % len(used_routes)
+        print "deferred_routes: %s" % len(deferred_routes)
+
+        return used_routes, deferred_routes
     
     

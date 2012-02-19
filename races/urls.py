@@ -13,4 +13,5 @@ urlpatterns = patterns('races.views',
     (r'^build/(\d+)?/$', 'build_race'),
     (r'^add-route-capacity/(\d+)?/$', 'add_route_capacity'),
     (r'^add-route-capacities/(\d+)?/$', 'add_route_capacities'),
+    (r'^find-unique-routes/(\d+)?/$', 'find_unique_routes'),
 )

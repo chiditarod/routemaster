@@ -1,0 +1,24 @@
+{% if error %}
+	<div class="error">{{error}}</div>
+{% endif %}
+
+{% if not race %}
+	<p>Problem getting race for race_id: {{race_id}}</p>
+{% else %}
+	<h1>Race: {{race.name}}</h1>
+	<h2>From {{race.checkpoint_start.name}} to {{race.checkpoint_finish.name}}</h2>
+
+	<h3>Used Routes</h3>
+	{% for r in used_routes %}
+		{{ r }}<br/>
+	{% endfor %}
+	
+	<h3>Deferred Routes</h3>
+	{% for r in deferred_routes %}
+		{{ r }}<br/>
+	{% endfor %}
+
+	
+{% endif %}
+	
+

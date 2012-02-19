@@ -63,3 +63,14 @@ def add_route_capacities(request, race_id):
     return render_to_response('races/add_route_capacities.html', {'count': count, 'race': race})
 
 
+def find_unique_routes(request, race_id):
+    """Find all unique routes that don't overlap checkpoint/positions"""
+    race = Race.objects.get(id=race_id)
+    if race.routes is None:
+        error = 'no-routes'
+        return render_to_response('races/find_unique_routes.html', {'error': error, 'race_id': race_id})
+    
+    r = RaceBuilder()
+    used_routes, deferred_routes = r.findUniqueRoutes(race)
+    return render_to_response('races/find_unique_routes.html', {'used_routes': used_routes, 'deferred_routes': deferred_routes, 'race': race})
+
