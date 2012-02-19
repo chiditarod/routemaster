@@ -259,6 +259,9 @@ class RaceBuilder(object):
                 if leg.checkpoint_b not in a[x]:
                     print "checkpoint %s is not yet used as checkpoint %s.  Add it to our temp list, b\n" % (leg.checkpoint_b, x)
                     b[x].append(leg.checkpoint_b)
+                elif repeat_qty and a[x].count(leg.checkpoint_b) < int(repeat_qty) + 1:
+                    print "checkpoint %s is used %s times as checkpoint %s, with %s repeats allowed. Add it to our temp list, b\n" % (leg.checkpoint_b, x, a[x].count(leg.checkpoint_b), repeat_qty)
+                    b[x].append(leg.checkpoint_b)
                 else:
                     print "checkpoint %s is already used as checkpoint %s.  defer entire route\n" % (leg.checkpoint_b, x)
                     deferred_routes.append(route)
@@ -266,7 +269,7 @@ class RaceBuilder(object):
                     break
             
             # if we made it this far, add our temp list b to our master list a
-            # TODO: there must be a cleaner way of doing this other than leg[0]
+            # TODO: there must be a cleaner way of doing this other than checkpoint[0]
             if ok:
                 for x, checkpoint in enumerate(b):
                     if len(checkpoint):

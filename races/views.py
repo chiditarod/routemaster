@@ -44,6 +44,7 @@ def race_detail(request, race_id):
     except Exception, e:
         raise e
 
+
 def add_route_capacity(request, route_id):
     """Calculate the capacity of a single route.  Slated for removal."""
     route = Route.objects.get(id=route_id)
@@ -63,14 +64,14 @@ def add_route_capacities(request, race_id):
     return render_to_response('races/add_route_capacities.html', {'count': count, 'race': race})
 
 
-def find_unique_routes(request, race_id):
+def find_unique_routes(request, race_id, repeat_qty = 0):
     """Find all unique routes that don't overlap checkpoint/positions"""
     race = Race.objects.get(id=race_id)
     if race.routes is None:
         error = 'no-routes'
         return render_to_response('races/find_unique_routes.html', {'error': error, 'race_id': race_id})
-    
+        
     r = RaceBuilder()
-    used_routes, deferred_routes = r.findUniqueRoutes(race)
-    return render_to_response('races/find_unique_routes.html', {'used_routes': used_routes, 'deferred_routes': deferred_routes, 'race': race})
+    used_routes, deferred_routes = r.findUniqueRoutes(race, repeat_qty)
+    return render_to_response('races/find_unique_routes.html', {'used_routes': used_routes, 'deferred_routes': deferred_routes, 'race': race, 'repeat_qty': repeat_qty})
 

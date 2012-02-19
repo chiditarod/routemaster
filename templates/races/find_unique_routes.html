@@ -8,6 +8,8 @@
 	<h1>Race: {{race.name}}</h1>
 	<h2>From {{race.checkpoint_start.name}} to {{race.checkpoint_finish.name}}</h2>
 
+	<h3>Repeat checkpoints allowed: {{repeat_qty}}</h3>
+
 	<h3>Used Routes</h3>
 	{% for r in used_routes %}
 		{{ r }}<br/>
