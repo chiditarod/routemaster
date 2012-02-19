@@ -75,3 +75,13 @@ def find_unique_routes(request, race_id, repeat_qty = 0):
     used_routes, deferred_routes = r.findUniqueRoutes(race, repeat_qty)
     return render_to_response('races/find_unique_routes.html', {'used_routes': used_routes, 'deferred_routes': deferred_routes, 'race': race, 'repeat_qty': repeat_qty})
 
+def delete_routes_in_race(request, race_id):
+    race = Race.objects.get(id=race_id)
+    if race.routes is None:
+        error = 'no-routes'
+        return render_to_response('races/generic.html', {'error': error, 'race_id': race_id})
+
+    r = RaceBuilder()
+    output = r.deleteRoutesInRace(race)
+    return render_to_response('races/generic.html', {'output': output, 'race': race})
+    

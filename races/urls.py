@@ -9,9 +9,10 @@ from django.conf.urls.defaults import *
 
 urlpatterns = patterns('races.views',
     (r'^$', 'list_races'),
-    (r'^(\d+)?/$', 'race_detail'),
-    (r'^build/(\d+)?/$', 'build_race'),
-    (r'^add-route-capacity/(\d+)/$', 'add_route_capacity'),
-    (r'^add-route-capacities/(\d+)/$', 'add_route_capacities'),
-    (r'^find-unique-routes/(\d+)/?(\d+)?$', 'find_unique_routes'),
+    (r'^(\d+)/?$', 'race_detail'),
+    (r'^build/(\d+)/?$', 'build_race'),
+    (r'^add-route-capacity/(\d+)/?$', 'add_route_capacity'),
+    (r'^add-route-capacities/(\d+)/?$', 'add_route_capacities'),
+    (r'^find-unique-routes/(\d+)/?(\d+)?/?$', 'find_unique_routes'),
+    (r'^delete-routes-in-race/(\d+)/?$', 'delete_routes_in_race'),
 )

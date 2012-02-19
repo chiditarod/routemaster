@@ -228,6 +228,11 @@ class RaceBuilder(object):
             count += 1
         return count
     
+    def deleteRoutesInRace(self, race):
+        r = Route.objects.filter(race=race)
+        routesToDelete = r.count()
+        r.all().delete()
+        return "Deleted %s routes from %s" % (routesToDelete, race)
     
     def findUniqueRoutes(self, race, repeat_qty = 0):
         """Choose the routes that don't overlap any checkpoints in each respective routeleg position."""
@@ -239,29 +244,31 @@ class RaceBuilder(object):
         # iterate through all routes in the race
         for route in race.routes.all():
 
-            print "processing route id: %s" % route.id
-
             ok = True
-            
+            print "processing route id: %s" % route.id
+        
             # temp list b, a list of lists
             b = list(list() for i in range(positions))
             
             # iterate through all checkpoints in each route
             for x, leg in enumerate(route.routelegs.all()):
                 
-                # skip the final routeleg (as we aren't processing the finish line, which is always the same)
+                # if we're evaluating the finish line, skip (since the finish is always the same)
                 if (x == positions):
                     break
                     
                 print "a[%s] is: %s" % (x, a[x])
                 print "leg is: %s" % leg
                 
+                # not used
                 if leg.checkpoint_b not in a[x]:
                     print "checkpoint %s is not yet used as checkpoint %s.  Add it to our temp list, b\n" % (leg.checkpoint_b, x)
                     b[x].append(leg.checkpoint_b)
+                # used less than our repeat qty
                 elif repeat_qty and a[x].count(leg.checkpoint_b) < int(repeat_qty) + 1:
                     print "checkpoint %s is used %s times as checkpoint %s, with %s repeats allowed. Add it to our temp list, b\n" % (leg.checkpoint_b, x, a[x].count(leg.checkpoint_b), repeat_qty)
                     b[x].append(leg.checkpoint_b)
+                # failure case
                 else:
                     print "checkpoint %s is already used as checkpoint %s.  defer entire route\n" % (leg.checkpoint_b, x)
                     deferred_routes.append(route)

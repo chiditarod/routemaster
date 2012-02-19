@@ -1,0 +1,13 @@
+{% if error %}
+	<div class="error">{{error}}</div>
+{% endif %}
+
+{% if not race %}
+	<p>Problem getting race for race_id: {{race_id}}</p>
+{% else %}
+	<h1>Race: {{race.name}}</h1>
+	<h2>From {{race.checkpoint_start.name}} to {{race.checkpoint_finish.name}}</h2>
+
+    {{ output }}
+
+{% endif %}
