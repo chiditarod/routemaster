@@ -12,15 +12,19 @@ class RouteAdmin(admin.ModelAdmin):
     inlines = [RouteLegNodeInline]
     list_per_page = 500
 
-#class RouteLegInline(admin.TabularInline):
-#    model = RouteLeg
-#    
-
 class RouteLegAdmin(admin.ModelAdmin):
     list_per_page = 500
     list_display = ('checkpoint_a', 'checkpoint_b', 'distance')
     list_filter = ('checkpoint_a', 'checkpoint_b', 'distance')
 
+class RouteInline(admin.TabularInline):
+    model = Route
+    extra = 2
+    list_per_page = 200
+    
+class RaceAdmin(admin.ModelAdmin):
+    inlines = [RouteInline]
+    
 #class RouteInline(admin.TabularInline):
 #    model = Route
 #    extra = 3
@@ -35,4 +39,4 @@ admin.site.register(RouteLeg, RouteLegAdmin)
 admin.site.register(Route, RouteAdmin)
 #admin.site.register(Route)
 
-admin.site.register(Race)
+admin.site.register(Race, RaceAdmin)

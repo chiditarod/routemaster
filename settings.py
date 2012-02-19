@@ -32,6 +32,8 @@ SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
 MEDIA_ROOT = os.path.join(SITE_ROOT, 'appmedia')
 TEMPLATE_DIRS = ( os.path.join(SITE_ROOT, 'templates'),)
 
+DEFAULT_CAPACITY_COMFORTABLE = 1000000
+DEFAULT_CAPACITY_MAXIMUM = 1000000
 
 DATABASES = {
     'default': {

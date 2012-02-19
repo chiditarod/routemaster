@@ -2,8 +2,9 @@ from django.template import Context, loader
 from django.http import HttpResponse
 from django.shortcuts import render_to_response
 
+from django.core.exceptions import ObjectDoesNotExist
 
-from races.models import Race
+from races.models import Race, Route
 # TODO: move this into the race app
 from ometa import RaceBuilder
 
@@ -37,5 +38,28 @@ def race_detail(request, race_id):
             return render_to_response('races/race_detail.html', {'error': error, 'race_id': race_id})
         else:
             return render_to_response('races/race_detail.html', {'race': race})
+    except DoesNotExist, e:
+        error = 'notfound'
+        return render_to_response('races/race_detail.html', {'error': error, 'race_id': race_id})
     except Exception, e:
         raise e
+
+def add_route_capacity(request, route_id):
+    """Calculate the capacity of a single route.  Slated for removal."""
+    route = Route.objects.get(id=route_id)
+    r = RaceBuilder()
+    return HttpResponse(r.addCapacityToRoute(route))
+    
+
+def add_route_capacities(request, race_id):
+    """Calculate capacities for all routes in a race."""
+    race = Race.objects.get(id=race_id)
+    if race.routes is None:
+        error = 'no-routes'
+        return render_to_response('races/add_route_capacities.html', {'error': error, 'race_id': race_id})
+    
+    r = RaceBuilder()
+    count = r.addRouteCapacities(race)
+    return render_to_response('races/add_route_capacities.html', {'count': count, 'race': race})
+
+

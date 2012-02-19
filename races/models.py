@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 import copy
 
 class CloneableModel(models.Model):
@@ -46,10 +47,8 @@ class Race(models.Model):
     def __unicode__(self):
         return "%s [ %s ==> %s ]" % (self.name, self.checkpoint_start.name, self.checkpoint_finish.name)
 
-#    def getroutes(self):
-#        print self.routes.
-#        print Route.objects.filter(races=self).all()
-#        return Route.objects.filter(races=self).all()
+    def getroutes(self):
+        return Route.objects.filter(race=self).all()
     
 
 class Checkpoint(models.Model):
@@ -89,14 +88,16 @@ class RouteLegNode(models.Model):
 class Route(models.Model):
     """Route Model"""
     name = models.CharField(max_length=60)
-    race = models.ForeignKey('Race', related_name='routes')
-    routes = models.ManyToManyField('Route', related_name='races', blank=True)
+    race = models.ForeignKey('Race', related_name='routes', blank=True)
     routelegs = models.ManyToManyField('RouteLeg', through='RouteLegNode', related_name='routelegs')
     checkpoint_start = models.ForeignKey('Checkpoint', related_name='start_for_route')
     checkpoint_finish = models.ForeignKey('Checkpoint', related_name='finish_for_route')
+    capacity_comfortable = models.IntegerField(blank=True, default=settings.DEFAULT_CAPACITY_COMFORTABLE)
+    capacity_max = models.IntegerField(blank=True, default=settings.DEFAULT_CAPACITY_MAXIMUM)
     is_valid = models.BooleanField()
-
+        
     def getLength(self):
+        """return total length of route"""
     	total = 0
     	for r in self.routelegnode_set.all():
     		total += r.routeleg.distance
@@ -116,18 +117,21 @@ class Route(models.Model):
             #    o = "No RouteLegs"
         except Exception, e:
             return "Exception thrown!"
-        return u"[%s] %s" % (self.getLength(), o)
+            
+        if self.capacity_comfortable < settings.DEFAULT_CAPACITY_COMFORTABLE and self.capacity_max < settings.DEFAULT_CAPACITY_MAXIMUM:
+            return u"[%s %s, %s comfort, %s max] %s" % (self.getLength(), self.race.measurement_system, self.capacity_comfortable, self.capacity_max, o)
+        else:
+            return u"[%s %s] %s" % (self.getLength(), self.race.measurement_system, o)
         
     def clone(self):
-        """Return an identical copy of the instance with a new ID."""
+        """Return an identical copy of the instance with a new ID.  copies M2M relationships with 'through' intermediate model."""
         if not self.pk:
             raise ValueError('Instance must be saved before it can be cloned.')
         duplicate = copy.copy(self)
         # Setting pk to None tricks Django into thinking this is a new object.
         duplicate.pk = None
         duplicate.save()
-        # ... but the trick loses all ManyToMany relations.
-        # copy the ManyToMany/through relation
+        # ... but the trick loses all ManyToMany relations, so we copy them manually.
         for field in self.routelegnode_set.all():
             rln = RouteLegNode.objects.create(parent_route=duplicate, routeleg=field.routeleg, order=field.order)
             duplicate.routelegnode_set.add(rln)

@@ -11,4 +11,6 @@ urlpatterns = patterns('races.views',
     (r'^$', 'list_races'),
     (r'^(\d+)?/$', 'race_detail'),
     (r'^build/(\d+)?/$', 'build_race'),
+    (r'^add-route-capacity/(\d+)?/$', 'add_route_capacity'),
+    (r'^add-route-capacities/(\d+)?/$', 'add_route_capacities'),
 )

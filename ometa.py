@@ -13,8 +13,7 @@ Copyright (c) 2012 Ometa, Inc. All rights reserved.
 
 from races.models import RouteLeg, Race, Checkpoint, RouteLegNode, Route
 from django.http import HttpResponse
-#from copy import deepcopy
-from util.utils import Utils
+from django.conf import settings
 
 class RaceBuilder(object):
 
@@ -63,6 +62,7 @@ class RaceBuilder(object):
             if not route:
                 route = Route()
                 route.name = 'Route %s' % (race.routes.count())
+                route.race = race
                 route.checkpoint_start = race.checkpoint_start
                 route.checkpoint_finish = race.checkpoint_finish
                 route.is_valid = False
@@ -191,6 +191,7 @@ class RaceBuilder(object):
         
 
     def sliceLatestNode(self, route, x):
+        """Slices off the most recent routelegnode from a route"""
         try:
             totalNodes = route.countRoutelegs()
             deleteNode = RouteLegNode.objects.get(parent_route=route, order=totalNodes)
@@ -200,4 +201,31 @@ class RaceBuilder(object):
         except Exception, e:
             self.ip(x, "[SLICE NODE] No node to delete OR problem.")
             
+    
+    def addCapacityToRoute(self, route):
+        capComfortable = settings.DEFAULT_CAPACITY_COMFORTABLE
+        capMaximum = settings.DEFAULT_CAPACITY_MAXIMUM
+        """Figures out the comfortable and maximum capacity for each route by looking at each checkpoint"""
+        for r in route.routelegs.all():
+            print capComfortable, capMaximum
+            print r
+            if r.checkpoint_a.capacity_comfortable < capComfortable:
+                capComfortable = r.checkpoint_a.capacity_comfortable
+            if r.checkpoint_a.capacity_max < capMaximum:
+                capMaximum = r.checkpoint_a.capacity_max
+        route.capacity_comfortable = capComfortable
+        route.capacity_max = capMaximum
+        route.save()
+        return capComfortable, capMaximum
+        
+    def addRouteCapacities(self, race):
+        count = 0
+        for r in race.routes.all():
+            self.addCapacityToRoute(r)
+            count += 1
+        return count
+    
+            
+    
+    
     
