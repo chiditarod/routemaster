@@ -128,7 +128,7 @@ class RaceBuilder(object):
             node = RouteLegNode()
             node.parent_route = route
             node.routeleg = leg
-            node.order = route.countRoutelegs() + 1
+            node.order = route.countRoutelegs()
             self.ip(x,'[NEW NODE] %s [order: %s]' % (node, node.order))
 
             # add the new node to the route
@@ -301,7 +301,7 @@ class RaceBuilder(object):
         return used_routes, deferred_routes
     
     
-    def leastFrequentCheckpointPositions(self, race, rarityThreshold):
+    def rarityTree(self, race, rarityThreshold):
         """Figure out the most least-frequent checkpoint/position pairs and pull their routes."""
 
         preferredRoutes = list()
@@ -321,7 +321,7 @@ class RaceBuilder(object):
                     break
     
                 # build an index of each checkpoint position.  put a dict of checkpoint/occurence frequency values in each.
-                key = str(leg.checkpoint_b.name)
+                key = str(leg.checkpoint_b.pk)
                 if key in a[x]:
                     a[x][key] += 1
                 else:
@@ -341,29 +341,29 @@ class RaceBuilder(object):
             sortedPairs = sorted(pairs)
             print sortedPairs
             
-            x = 0
-            i = sortedPairs[x][0]
+            y = 0
+            i = sortedPairs[y][0]
 
             while (i <= rarityThreshold):
-                print "x: %s, i: %s" % (x,i)
-                checkpoint_id = sortedPairs[x][1] # grab the checkpoint name from the tuple.
-                checkpoint_name=checkpoint_id #Checkpoint.objects.get(id=checkpoint_id).name
-                print "checkpoint: %s" % (checkpoint_name)
+                print "x: %s, y: %s, i: %s" % (x,y,i)
+                checkpoint_id = sortedPairs[y][1] # grab the checkpoint name from the tuple.
+                checkpoint = Checkpoint.objects.get(id__exact=checkpoint_id)
+                print "checkpoint: %s" % (checkpoint.name)
                 # filter routes: choose the routes that have 'checkpoint' in order 'x'.
-                routes = Route.objects.filter(routelegs__checkpoint_b__name=checkpoint_id, routelegnode__order=x+1).distinct()
+                routes = Route.objects.filter(routelegs__checkpoint_b__pk=checkpoint_id, routelegnode__order=x+1).distinct()
                 print ''
                 print "Found %s routes:" % routes.count()
-                for d in routes:
-                    print d
+                for r in routes:
+                    rarityTree.append({'order': x, 'rarity':i, 'route':r, 'checkpoint':checkpoint})
+                    print r
+                y += 1
+                i = sortedPairs[y][0]
                 
-                rarityTree.append({'pos': x, 'checkpoint_id':checkpoint_id, 'routes':routes})
-
-                x += 1                    
-                i = sortedPairs[x][0]
-                print "i is now %s" % i
             else:
                 print "%s was greater than %s" % (i, rarityThreshold)
-        return o
+            
+        print rarityTree
+        return rarityTree
                 
                 
                 

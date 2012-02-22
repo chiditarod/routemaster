@@ -88,13 +88,13 @@ def delete_routes_in_race(request, race_id):
     return render_to_response('races/generic.html', {'output': output, 'race': race})
     
     
-def least_frequent_checkpoint_positions(request, race_id):
+def rarity_tree(request, race_id):
     race = Race.objects.get(id=race_id)
     if race.routes is None:
         error = 'no-routes'
         return render_to_response('races/generic.html', {'error': error, 'race_id': race_id})
 
     r = RaceBuilder()
-    output = r.leastFrequentCheckpointPositions(race, settings.DEFAULT_RARITY_THRESHOLD)
-    return render_to_response('races/generic.html', {'output': output, 'race': race})
+    rarityTree = r.rarityTree(race, settings.DEFAULT_RARITY_THRESHOLD)
+    return render_to_response('races/rarity_tree.html', {'rarityTree': rarityTree, 'race': race})
     
