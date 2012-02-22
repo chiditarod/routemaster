@@ -102,7 +102,11 @@ class Route(models.Model):
     capacity_comfortable = models.IntegerField(blank=True, default=settings.DEFAULT_CAPACITY_COMFORTABLE)
     capacity_max = models.IntegerField(blank=True, default=settings.DEFAULT_CAPACITY_MAXIMUM)
     selected = models.BooleanField()
+    rarity = models.IntegerField(blank=True, default=100)
     
+    class Meta:
+        ordering = ['rarity']
+        
     def getLength(self):
         """return total length of route"""
     	total = 0
@@ -124,11 +128,16 @@ class Route(models.Model):
             #    o = "No RouteLegs"
         except Exception, e:
             return "Exception thrown!"
-            
+        
+        out = u"[%s %s" %  (self.getLength(), self.race.measurement_system)
+        
         if self.capacity_comfortable < settings.DEFAULT_CAPACITY_COMFORTABLE and self.capacity_max < settings.DEFAULT_CAPACITY_MAXIMUM:
-            return u"[%s %s, %s comfort, %s max] %s" % (self.getLength(), self.race.measurement_system, self.capacity_comfortable, self.capacity_max, o)
-        else:
-            return u"[%s %s] %s" % (self.getLength(), self.race.measurement_system, o)
+            out += u" %s comfort, %s max]" % (self.capacity_comfortable, self.capacity_max)
+        if self.rarity:
+            out += u" %s rarity" % self.rarity
+        out += "] %s" % o
+        
+        return out
         
     def clone(self):
         """Return an identical copy of the instance with a new ID.  copies M2M relationships with 'through' intermediate model."""

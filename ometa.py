@@ -194,7 +194,7 @@ class RaceBuilder(object):
         """Slices off the most recent routelegnode from a route"""
         try:
             totalNodes = route.countRoutelegs()
-            deleteNode = RouteLegNode.objects.get(parent_route=route, order=totalNodes)
+            deleteNode = RouteLegNode.objects.get(parent_route=route, order=totalNodes-1) # order starts at 0
             if deleteNode:
                 self.ip(x, "[SLICE NODE] %s:" % deleteNode)
                 deleteNode.delete()
@@ -235,7 +235,6 @@ class RaceBuilder(object):
         routesToDelete = r.count()
         r.all().delete()
         return "Deleted %s routes from %s" % (routesToDelete, race)
-    
     
     def findUniqueRoutes(self, race, repeat_qty = 0):
         """Choose the routes that don't overlap any checkpoints in each respective routeleg position.  Repeats are allowed via a variable."""
@@ -351,6 +350,9 @@ class RaceBuilder(object):
                 print ''
                 print "Found %s routes:" % routes.count()
                 for r in routes:
+                    # update the rarity for this route
+                    r.rarity = i
+                    r.save()
                     rarityTree.append({'order': x, 'rarity':i, 'route':r, 'checkpoint':checkpoint})
                     print r
                 y += 1

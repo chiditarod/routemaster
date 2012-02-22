@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Rarity Tree{% endblock %}
+{% block h1 %}Finds the rarest checkpoint/positioning pairs{% endblock %}
+{% block content %}
+
+{% if error %}
+	<div class="error">{{error}}</div>
+{% endif %}
+
+{% if not race %}
+	<p>Problem getting race for race_id: {{race_id}}</p>
+{% else %}
+
+	<h2>Race: {{race.name}}</h2>
+	<h3>From {{race.checkpoint_start.name}} to {{race.checkpoint_finish.name}}</h3>
+
+    <table>
+        <tr><th>Rarity</th><th>Order</th><th>Checkpoint</th><th>Route</th></tr>
+	    {% for d in rarityTree %}
+	        <tr>
+	            <td>{{d.rarity}}</td><td>{{d.order}}</td><td>{{d.checkpoint}}</td><td>{{d.route}}</td>
+			</tr>
+		{% endfor %}
+	</table>
+	
+{% endif %}
+
+{% endblock %}

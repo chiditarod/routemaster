@@ -66,6 +66,7 @@ def add_route_capacities(request, race_id):
     return render_to_response('races/add_route_capacities.html', {'count': count, 'race': race})
 
 
+
 def find_unique_routes(request, race_id, repeat_qty = 0):
     """Find all unique routes that don't overlap checkpoint/positions"""
     race = Race.objects.get(id=race_id)
@@ -77,7 +78,9 @@ def find_unique_routes(request, race_id, repeat_qty = 0):
     used_routes, deferred_routes = r.findUniqueRoutes(race, repeat_qty)
     return render_to_response('races/find_unique_routes.html', {'used_routes': used_routes, 'deferred_routes': deferred_routes, 'race': race, 'repeat_qty': repeat_qty})
 
+
 def delete_routes_in_race(request, race_id):
+    """Delete all routes attached to a race.  Warning: destructive"""
     race = Race.objects.get(id=race_id)
     if race.routes is None:
         error = 'no-routes'
@@ -87,14 +90,23 @@ def delete_routes_in_race(request, race_id):
     output = r.deleteRoutesInRace(race)
     return render_to_response('races/generic.html', {'output': output, 'race': race})
     
+from races import forms
     
 def rarity_tree(request, race_id):
+#    if request.method == 'POST':
+#        form = SelectedForm(request.POST)
+#        if form.is_valid():
+#            pass
+#    else:
+#        form = SelectedForm()   # unbound form
+        
     race = Race.objects.get(id=race_id)
     if race.routes is None:
         error = 'no-routes'
-        return render_to_response('races/generic.html', {'error': error, 'race_id': race_id})
+        return render_to_response('races/generic.html', {'error': error, 'race_id': race_id, 'form':form})
 
     r = RaceBuilder()
     rarityTree = r.rarityTree(race, settings.DEFAULT_RARITY_THRESHOLD)
     return render_to_response('races/rarity_tree.html', {'rarityTree': rarityTree, 'race': race})
     
+
