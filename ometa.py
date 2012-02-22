@@ -221,24 +221,28 @@ class RaceBuilder(object):
         
         
     def addRouteCapacities(self, race):
-        """Add capacities for each route stored in a race."""
+        """Add capacities into the database for each route stored in a race."""
         count = 0
         for r in race.routes.all():
             self.addCapacityToRoute(r)
             count += 1
         return count
     
+    
     def deleteRoutesInRace(self, race):
+        """Delete all routes attached to a particular race."""
         r = Route.objects.filter(race=race)
         routesToDelete = r.count()
         r.all().delete()
         return "Deleted %s routes from %s" % (routesToDelete, race)
     
+    
     def findUniqueRoutes(self, race, repeat_qty = 0):
-        """Choose the routes that don't overlap any checkpoints in each respective routeleg position."""
+        """Choose the routes that don't overlap any checkpoints in each respective routeleg position.  Repeats are allowed via a variable."""
         used_routes = []
         deferred_routes = []
         positions = race.checkpoint_qty - 1 # subtract one so we don't include the finish line.
+        # make a list of lists, 'positions' in length
         a = list(list() for i in range(positions))
         
         # iterate through all routes in the race
@@ -296,4 +300,76 @@ class RaceBuilder(object):
 
         return used_routes, deferred_routes
     
+    
+    def leastFrequentCheckpointPositions(self, race, rarityThreshold):
+        """Figure out the most least-frequent checkpoint/position pairs and pull their routes."""
+
+        preferredRoutes = list()
+        
+        positions = race.checkpoint_qty - 1 # subtract one so we don't include the finish line.
+        # make a list of lists, 'positions' in length
+        a = list(dict() for i in range(positions))
+        
+        # iterate through all routes in the race
+        for route in race.routes.all():
+        
+            # iterate through all checkpoints in each route
+            for x, leg in enumerate(route.routelegs.all()):
+            
+                # if we're evaluating the finish line, skip (since the finish is always the same)
+                if (x == positions):
+                    break
+    
+                # build an index of each checkpoint position.  put a dict of checkpoint/occurence frequency values in each.
+                key = str(leg.checkpoint_b.name)
+                if key in a[x]:
+                    a[x][key] += 1
+                else:
+                    a[x][key] = 1
+        
+        rarityTree = list()
+        o = ''
+        # iterate through each checkpoint position
+        for x, row in enumerate(a):
+            print "\n[position %s]" % (x)
+            o += "%s: %s" % (x, row)
+            # convert dict checkpoint/occurence list into sortable tuples.
+            pairs = zip(row.values(), row.keys())
+#            print pairs
+            
+            # sort the least-occuring checkpoints first
+            sortedPairs = sorted(pairs)
+            print sortedPairs
+            
+            x = 0
+            i = sortedPairs[x][0]
+
+            while (i <= rarityThreshold):
+                print "x: %s, i: %s" % (x,i)
+                checkpoint_id = sortedPairs[x][1] # grab the checkpoint name from the tuple.
+                checkpoint_name=checkpoint_id #Checkpoint.objects.get(id=checkpoint_id).name
+                print "checkpoint: %s" % (checkpoint_name)
+                # filter routes: choose the routes that have 'checkpoint' in order 'x'.
+                routes = Route.objects.filter(routelegs__checkpoint_b__name=checkpoint_id, routelegnode__order=x+1).distinct()
+                print ''
+                print "Found %s routes:" % routes.count()
+                for d in routes:
+                    print d
+                
+                rarityTree.append({'pos': x, 'checkpoint_id':checkpoint_id, 'routes':routes})
+
+                x += 1                    
+                i = sortedPairs[x][0]
+                print "i is now %s" % i
+            else:
+                print "%s was greater than %s" % (i, rarityThreshold)
+        return o
+                
+                
+                
+                
+                
+                
+                
+                
     

@@ -8,6 +8,8 @@ from races.models import Race, Route
 # TODO: move this into the race app
 from ometa import RaceBuilder
 
+from django.conf import settings
+
 # consult:
 # https://docs.djangoproject.com/en/dev/intro/tutorial03/#philosophy
 
@@ -83,5 +85,16 @@ def delete_routes_in_race(request, race_id):
 
     r = RaceBuilder()
     output = r.deleteRoutesInRace(race)
+    return render_to_response('races/generic.html', {'output': output, 'race': race})
+    
+    
+def least_frequent_checkpoint_positions(request, race_id):
+    race = Race.objects.get(id=race_id)
+    if race.routes is None:
+        error = 'no-routes'
+        return render_to_response('races/generic.html', {'error': error, 'race_id': race_id})
+
+    r = RaceBuilder()
+    output = r.leastFrequentCheckpointPositions(race, settings.DEFAULT_RARITY_THRESHOLD)
     return render_to_response('races/generic.html', {'output': output, 'race': race})
     

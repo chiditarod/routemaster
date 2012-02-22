@@ -15,4 +15,5 @@ urlpatterns = patterns('races.views',
     (r'^add-route-capacities/(\d+)/?$', 'add_route_capacities'),
     (r'^find-unique-routes/(\d+)/?(\d+)?/?$', 'find_unique_routes'),
     (r'^delete-routes-in-race/(\d+)/?$', 'delete_routes_in_race'),
+    (r'^least-frequent-checkpoint-positions/(\d+)/?$', 'least_frequent_checkpoint_positions'),
 )

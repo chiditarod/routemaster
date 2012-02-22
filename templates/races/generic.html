@@ -1,3 +1,8 @@
+{% extends "base.html" %}
+{% block title %}Generic{% endblock %}
+{% block headline %}Generic Template{% endblock %}
+{% block content %}
+
 {% if error %}
 	<div class="error">{{error}}</div>
 {% endif %}
@@ -11,3 +16,5 @@
     {{ output }}
 
 {% endif %}
+
+{% endblock %}

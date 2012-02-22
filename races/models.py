@@ -64,7 +64,10 @@ class Checkpoint(models.Model):
 
     def __unicode__(self):
         return "%s" % (self.name)
-
+        
+    @property
+    def getName(self):
+        return "%s" % (self.name)
 
 class RouteLeg(models.Model):
     """Model containing the distance between 2 checkpoints"""
@@ -98,8 +101,8 @@ class Route(models.Model):
     checkpoint_finish = models.ForeignKey('Checkpoint', related_name='finish_for_route')
     capacity_comfortable = models.IntegerField(blank=True, default=settings.DEFAULT_CAPACITY_COMFORTABLE)
     capacity_max = models.IntegerField(blank=True, default=settings.DEFAULT_CAPACITY_MAXIMUM)
-    #is_valid = models.BooleanField()
-        
+    selected = models.BooleanField()
+    
     def getLength(self):
         """return total length of route"""
     	total = 0

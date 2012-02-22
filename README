@@ -1,0 +1,24 @@
+Helpful python shell commands
+
+import races, django.db, ometa
+race = Race.objects.filter(name="Chiditarod VII")[0]
+
+reload(races); from races.models import RouteLeg, Race, Checkpoint, RouteLegNode, Route
+reload(ometa); from ometa import RaceBuilder; rb = RaceBuilder(); rb.buildRace(race)
+
+
+django.db.connection._commit()
+
+
+================================================
+choose comfortable or max
+
+find the routes that have the least number of duplicate checkpoints
+
+
+S	a	b	c	F
+S	a	c	b	F
+S	b	a	c	F
+S	b	c	a	F
+S	c	a	b	F
+S	c	b	a	F
