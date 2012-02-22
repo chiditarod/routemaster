@@ -326,23 +326,20 @@ class RaceBuilder(object):
                     a[x][key] += 1
                 else:
                     a[x][key] = 1
-        
-        rarityTree = list()
-        o = ''
+
+        rarityTree = list()             # init our result list
         # iterate through each checkpoint position
         for x, row in enumerate(a):
             print "\n[position %s]" % (x)
-            o += "%s: %s" % (x, row)
             # convert dict checkpoint/occurence list into sortable tuples.
             pairs = zip(row.values(), row.keys())
-#            print pairs
             
-            # sort the least-occuring checkpoints first
+            # sort the least-occuring position/checkpoint combos first
             sortedPairs = sorted(pairs)
             print sortedPairs
             
-            y = 0
-            i = sortedPairs[y][0]
+            y = 0                       # for moving upwards in the rarity threshold
+            i = sortedPairs[y][0]       # initial value
 
             while (i <= rarityThreshold):
                 print "x: %s, y: %s, i: %s" % (x,y,i)
@@ -350,7 +347,7 @@ class RaceBuilder(object):
                 checkpoint = Checkpoint.objects.get(id__exact=checkpoint_id)
                 print "checkpoint: %s" % (checkpoint.name)
                 # filter routes: choose the routes that have 'checkpoint' in order 'x'.
-                routes = Route.objects.filter(routelegs__checkpoint_b__pk=checkpoint_id, routelegnode__order=x+1).distinct()
+                routes = Route.objects.filter(routelegs__checkpoint_b__pk=checkpoint_id, routelegnode__order=x).distinct()
                 print ''
                 print "Found %s routes:" % routes.count()
                 for r in routes:
