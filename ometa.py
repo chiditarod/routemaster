@@ -14,6 +14,11 @@ Copyright (c) 2012 Ometa, Inc. All rights reserved.
 from races.models import RouteLeg, Race, Checkpoint, RouteLegNode, Route
 from django.http import HttpResponse
 from django.conf import settings
+import operator
+import timeit
+from itertools import permutations
+#from copy import copy
+
 
 class RaceBuilder(object):
 
@@ -236,6 +241,7 @@ class RaceBuilder(object):
         r.all().delete()
         return "Deleted %s routes from %s" % (routesToDelete, race)
     
+    
     def findUniqueRoutes(self, race, repeat_qty = 0):
         """Choose the routes that don't overlap any checkpoints in each respective routeleg position.  Repeats are allowed via a variable."""
         used_routes = []
@@ -299,9 +305,125 @@ class RaceBuilder(object):
 
         return used_routes, deferred_routes
     
+
+
+
+    def findUniqueRoutes2(self, race, repeat_qty = 0):
+        """Choose the routes that don't overlap any checkpoints in each respective routeleg position.  Repeats are allowed via a variable."""
+
+        #timer = Timer()
+        
+        maxUnique = 0
+        
+        # build a list of all potential combinations of routes.
+        all_route_combos = permutations(race.routes.all())
+
+#        n = 0
+#        for x in all_route_combos:
+#            n += 1
+#        print "total permutations: %s" % n
+
+        master_results = list()
+        
+        for n, routeset in enumerate(all_route_combos):
+
+            if n % 100 == 0:
+                print "processing routeset: %s" % n
+            
+            used_routes = []
+ #           deferred_routes = []
+            positions = race.checkpoint_qty - 1 # subtract one so we don't include the finish line.
+            # make a list of lists, 'positions' in length
+            a = list(list() for i in range(positions))
+
+            # iterate through all routes in the race
+            for route in routeset:
+
+                ok = True
+                if settings.DEBUG_MODE:
+                    print "processing route id: %s" % route.id
+
+                # temp list b, a list of lists
+                b = list(list() for i in range(positions))
+
+                # iterate through all checkpoints in each route
+                for x, leg in enumerate(route.routelegs.all()):
+
+                    # if we're evaluating the finish line, skip (since the finish is always the same)
+                    if (x == positions):
+                        break
+
+
+                    if settings.DEBUG_MODE:
+                        print "a[%s] is: %s" % (x, a[x])
+                        print "leg is: %s" % leg
+
+                    # not used
+                    if leg.checkpoint_b not in a[x]:
+                        if settings.DEBUG_MODE:
+                            print "checkpoint %s is not yet used as checkpoint %s.  Add it to our temp list, b\n" % (leg.checkpoint_b, x)
+                        b[x].append(leg.checkpoint_b)
+                    # used less than our repeat qty
+                    elif repeat_qty and a[x].count(leg.checkpoint_b) < int(repeat_qty) + 1:
+                        if settings.DEBUG_MODE:            
+                            print "checkpoint %s is used %s times as checkpoint %s, with %s repeats allowed. Add it to our temp list, b\n" % (leg.checkpoint_b, x, a[x].count(leg.checkpoint_b), repeat_qty)
+                        b[x].append(leg.checkpoint_b)
+                    # failure case
+                    else:
+                        if settings.DEBUG_MODE:
+                            print "checkpoint %s is already used as checkpoint %s.  defer entire route\n" % (leg.checkpoint_b, x)
+#                        deferred_routes.append(route)
+                        ok = False
+                        break
+
+                # if we made it this far, add our temp list b to our master list a
+                # TODO: there must be a cleaner way of doing this other than checkpoint[0]
+                if ok:
+                    for x, checkpoint in enumerate(b):
+                        if len(checkpoint):
+                            if settings.DEBUG_MODE:
+                                print "appending: %s %s\n" % (x, checkpoint)
+                            a[x].append(checkpoint[0])
+
+                    # add this route to our used route list.
+                    used_routes.append(route)
+
+            if settings.DEBUG_MODE:
+                print ""
+                for i in a:
+                    print "%s" % i
+                print ""
+
+                print "used_routes: %s" % len(used_routes)
+                #print "deferred_routes: %s" % len(deferred_routes)
+
+            if len(used_routes) > maxUnique:
+                print "routeset %s: # of unique routes (%s) > current maxUnique value (%s)" % (n, len(used_routes), maxUnique)
+                maxUnique = len(used_routes)
+                master_results.append( (len(used_routes),used_routes) )
+        
+        return master_results
+    
+# ======================================================================================    
+    
+    
+    def checkpointFrequency(self, routes):
+        """Count up how many times each checkpoint appears in a list of routes."""
+        counts = dict()
+        for r in routes:
+            for leg in r.routelegs.all():
+                if leg.checkpoint_b.name == r.race.checkpoint_finish.name:
+                    continue
+                if str(leg.checkpoint_b.name) in counts:
+                    counts[str(leg.checkpoint_b.name)] += 1
+                else:
+                    counts[str(leg.checkpoint_b.name)] = 1
+        s = sorted(counts.iteritems(), key=operator.itemgetter(1))
+        return s
+    
     
     def rarityTree(self, race, rarityThreshold):
-        """Figure out the most least-frequent checkpoint/position pairs and pull their routes."""
+        """Figure out the least-frequent checkpoint/position pairs repeated for all routes and pull their routes."""
 
         preferredRoutes = list()
         

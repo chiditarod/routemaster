@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Find Unique Routes{% endblock %}
+{% block title %}Find Unique Routes 2{% endblock %}
 {% block h1 %}Find Routes with completely unique checkpoint/positions{% endblock %}
 {% block content %}
 
@@ -14,16 +14,16 @@
 	<h2>From {{race.checkpoint_start.name}} to {{race.checkpoint_finish.name}}</h2>
 
 	<h3>Repeat checkpoints allowed: {{repeat_qty}}</h3>
+	
+	{% for routeset in master_results %}
+	    <h3>Routeset</h3>
+    
+    	{% for r in routeset %}
+    		{{ r }}<br/>
+    	{% endfor %}
 
-	<h3>Used Routes</h3>
-	{% for r in used_routes %}
-		{{ r }}<br/>
 	{% endfor %}
 	
-	<h3>Deferred Routes</h3>
-	{% for r in deferred_routes %}
-		{{ r }}<br/>
-	{% endfor %}
 
 {% endif %}
 	

@@ -328,17 +328,17 @@ table thead th.descending a {
 
 /* ORDERABLE TABLES */
 
-table.orderable tbody tr td:hover {
+tablerarityTreeable tbody tr td:hover {
     cursor: move;
 }
 
-table.orderable tbody tr td:first-child {
+tablerarityTreeable tbody tr td:first-child {
     padding-left: 14px;
     background-image: url(../img/admin/nav-bg-grabber.gif);
     background-repeat: repeat-y;
 }
 
-table.orderable-initalized .order-cell, body>tr>td.order-cell {
+tablerarityTreeable-initalized rarityTree-cell, body>tr>tdrarityTree-cell {
     display: none;
 }
 

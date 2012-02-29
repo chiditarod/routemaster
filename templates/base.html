@@ -4,6 +4,11 @@
         <link rel="stylesheet" href="default.css" type="text/css">
         <title>{% block title %}{% endblock %}</title>
         {% block extrahead %}{% endblock %}
+		<style>
+			body {
+				background: #ccc;
+			}
+		</style>
     </head>
     <body>
         <h1 id="top">{% block h1 %}{% endblock %}</h1>

@@ -5,7 +5,6 @@ from django.shortcuts import render_to_response
 from django.core.exceptions import ObjectDoesNotExist
 
 from races.models import Race, Route
-# TODO: move this into the race app
 from ometa import RaceBuilder
 
 from django.conf import settings
@@ -79,6 +78,22 @@ def find_unique_routes(request, race_id, repeat_qty = 0):
     return render_to_response('races/find_unique_routes.html', {'used_routes': used_routes, 'deferred_routes': deferred_routes, 'race': race, 'repeat_qty': repeat_qty})
 
 
+
+def find_unique_routes2(request, race_id, repeat_qty = 0):
+    """Find all unique routes that don't overlap checkpoint/positions"""
+    race = Race.objects.get(id=race_id)
+    if race.routes is None:
+        error = 'no-routes'
+        return render_to_response('races/find_unique_routes.html', {'error': error, 'race_id': race_id})
+
+    r = RaceBuilder()
+    master_results = r.findUniqueRoutes2(race, repeat_qty)
+    print "calling template"
+    return render_to_response('races/find_unique_routes2.html', {'master_results': master_results, 'race': race, 'repeat_qty': repeat_qty})
+
+
+
+
 def delete_routes_in_race(request, race_id):
     """Delete all routes attached to a race.  Warning: destructive"""
     race = Race.objects.get(id=race_id)
@@ -92,21 +107,30 @@ def delete_routes_in_race(request, race_id):
     
 from races import forms
     
-def rarity_tree(request, race_id):
-#    if request.method == 'POST':
-#        form = SelectedForm(request.POST)
-#        if form.is_valid():
-#            pass
-#    else:
-#        form = SelectedForm()   # unbound form
-        
+def rarity_tree(request, race_id, rarity_threshold):
+    # set default
+    if not rarity_threshold:
+        rarity_threshold = settings.DEFAULT_RARITY_THRESHOLD
+
     race = Race.objects.get(id=race_id)
     if race.routes is None:
         error = 'no-routes'
         return render_to_response('races/generic.html', {'error': error, 'race_id': race_id, 'form':form})
 
     r = RaceBuilder()
-    rarityTree = r.rarityTree(race, settings.DEFAULT_RARITY_THRESHOLD)
+    rarityTree = r.rarityTree(race, int(rarity_threshold))
     return render_to_response('races/rarity_tree.html', {'rarityTree': rarityTree, 'race': race})
     
 
+def checkpoint_frequency(request, race_id):
+    race = Race.objects.get(id=race_id)
+    if race.routes is None:
+        error = 'no-routes'
+        return render_to_response('races/generic.html', {'error': error, 'race_id': race_id, 'form':form})
+
+    routes = Route.objects.filter(race=race, selected=True)
+    print routes
+    
+    r = RaceBuilder()
+    counts = r.checkpointFrequency(routes)
+    return render_to_response('races/checkpoint_frequency.html', {'counts': counts, 'race': race})

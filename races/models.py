@@ -105,7 +105,7 @@ class Route(models.Model):
     rarity = models.IntegerField(blank=True, default=100)
     
     class Meta:
-        ordering = ['rarity']
+        ordering = ['-selected', 'rarity']
         
     def getLength(self):
         """return total length of route"""
@@ -129,12 +129,16 @@ class Route(models.Model):
         except Exception, e:
             return "Exception thrown!"
         
-        out = u"[%s %s" %  (self.getLength(), self.race.measurement_system)
+        if self.selected:
+            out = "* "
+        else:
+            out = ''
+        out += u"[%s %s" %  (self.getLength(), self.race.measurement_system)
         
         if self.capacity_comfortable < settings.DEFAULT_CAPACITY_COMFORTABLE and self.capacity_max < settings.DEFAULT_CAPACITY_MAXIMUM:
-            out += u" %s comfort, %s max]" % (self.capacity_comfortable, self.capacity_max)
+            out += u", %s comfort, %s max" % (self.capacity_comfortable, self.capacity_max)
         if self.rarity:
-            out += u" %s rarity" % self.rarity
+            out += u", %s rarity" % self.rarity
         out += "] %s" % o
         
         return out

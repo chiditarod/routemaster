@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Checkpoint Frequency{% endblock %}
+{% block h1 %}How often is each checkpoint used?{% endblock %}
+{% block content %}
+
+{% if error %}
+	<div class="error">{{error}}</div>
+{% endif %}
+
+{% if not race %}
+	<p>Problem getting race for race_id: {{race_id}}</p>
+{% else %}
+
+	<h2>Race: {{race.name}}</h2>
+	<h3>From {{race.checkpoint_start.name}} to {{race.checkpoint_finish.name}}</h3>
+
+    <table>
+        <tr><th>Checkpoint</th><th>Frequency</th></tr>
+	    {% for x,y in counts %}
+	        <tr>
+				<td>{{ x }}</td><td>{{ y }}</td>
+	     	</tr>
+		{% endfor %}
+	</table>
+	
+{% endif %}
+
+{% endblock %}

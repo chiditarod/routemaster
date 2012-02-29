@@ -1,3 +1,8 @@
+{% extends "base.html" %}
+{% block title %}Routemaster{% endblock %}
+{% block h1 %}Routemaster{% endblock %}
+{% block content %}
+
 {% if race_list %}
 	<ul>
 		{% for race in race_list %}
@@ -17,3 +22,5 @@
 	<p>No races are available</p>
 {% endif %}
 
+
+{% endblock %}

@@ -2,6 +2,14 @@ from races.models import Checkpoint, RouteLeg, Route, RouteLegNode, Race
 from django.contrib import admin
 
 
+def selectRoute(modeladmin, request, queryset):
+    queryset.update(selected=True)
+
+def deselectRoute(modeladmin, request, queryset):
+    queryset.update(selected=False)
+
+selectRoute.short_description = "Select Route"
+deselectRoute.short_description = "Deselect Route"
 
 class RouteLegNodeInline(admin.TabularInline):
     model = RouteLegNode
@@ -11,6 +19,7 @@ class RouteLegNodeInline(admin.TabularInline):
 class RouteAdmin(admin.ModelAdmin):
     inlines = [RouteLegNodeInline]
     list_per_page = 500
+    actions = [selectRoute, deselectRoute]
 
 class RouteLegAdmin(admin.ModelAdmin):
     list_per_page = 500
@@ -24,14 +33,8 @@ class RouteInline(admin.TabularInline):
     
 class RaceAdmin(admin.ModelAdmin):
     inlines = [RouteInline]
-    
-#class RouteInline(admin.TabularInline):
-#    model = Route
-#    extra = 3
 
-#class RaceAdmin(admin.ModelAdmin):
-#    inlines = [RouteInline]
-
+        
 
 admin.site.register(Checkpoint)
 admin.site.register(RouteLegNode)

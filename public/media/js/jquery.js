@@ -2794,8 +2794,8 @@ Sizzle.find = function(expr, context, isXML){
 		return [];
 	}
 
-	for ( var i = 0, l = Expr.order.length; i < l; i++ ) {
-		var type = Expr.order[i], match;
+	for ( var i = 0, l = ExprrarityTree.length; i < l; i++ ) {
+		var type = ExprrarityTree[i], match;
 		
 		if ( (match = Expr.leftMatch[ type ].exec( expr )) ) {
 			var left = match[1];
@@ -3560,7 +3560,7 @@ if ( document.querySelectorAll ) {
 		return;
 	}
 	
-	Expr.order.splice(1, 0, "CLASS");
+	ExprrarityTree.splice(1, 0, "CLASS");
 	Expr.find.CLASS = function(match, context, isXML) {
 		if ( typeof context.getElementsByClassName !== "undefined" && !isXML ) {
 			return context.getElementsByClassName(match[1]);
