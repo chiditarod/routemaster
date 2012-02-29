@@ -1,0 +1,33 @@
+
+processing routeset: 16200
+.python.bin(13869,0xb0081000) malloc: *** mmap(size=16777216) failed (error code=12)
+*** error: can't allocate region
+*** set a breakpoint in malloc_error_break to debug
+.python.bin(13869,0xa05bb540) malloc: *** mmap(size=16777216) failed (error code=12)
+*** error: can't allocate region
+*** set a breakpoint in malloc_error_break to debug
+Traceback (most recent call last):
+  File "manage.py", line 11, in <module>
+    execute_manager(settings)
+  File "/Applications/DjangoStack/apps/django/lib/python2.6/site-packages/django/core/management/__init__.py", line 438, in execute_manager
+    utility.execute()
+  File "/Applications/DjangoStack/apps/django/lib/python2.6/site-packages/django/core/management/__init__.py", line 379, in execute
+    self.fetch_command(subcommand).run_from_argv(self.argv)
+  File "/Applications/DjangoStack/apps/django/lib/python2.6/site-packages/django/core/management/base.py", line 191, in run_from_argv
+    self.execute(*args, **options.__dict__)
+  File "/Applications/DjangoStack/apps/django/lib/python2.6/site-packages/django/core/management/base.py", line 220, in execute
+    output = self.handle(*args, **options)
+  File "/Applications/DjangoStack/apps/django/lib/python2.6/site-packages/django/core/management/commands/runserver.py", line 67, in handle
+    self.run(*args, **options)
+  File "/Applications/DjangoStack/apps/django/lib/python2.6/site-packages/django/core/management/commands/runserver.py", line 76, in run
+    autoreload.main(self.inner_run, args, options)
+  File "/Applications/DjangoStack/apps/django/lib/python2.6/site-packages/django/utils/autoreload.py", line 138, in main
+    reloader(main_func, args, kwargs)
+  File "/Applications/DjangoStack/apps/django/lib/python2.6/site-packages/django/utils/autoreload.py", line 111, in python_reloader
+    reloader_thread()
+  File "/Applications/DjangoStack/apps/django/lib/python2.6/site-packages/django/utils/autoreload.py", line 92, in reloader_thread
+    if code_changed():
+  File "/Applications/DjangoStack/apps/django/lib/python2.6/site-packages/django/utils/autoreload.py", line 57, in code_changed
+    for filename in filter(lambda v: v, map(lambda m: getattr(m, "__file__", None), sys.modules.values())):
+MemoryError
+
