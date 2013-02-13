@@ -41,7 +41,6 @@ DEFAULT_RARITY_THRESHOLD = 2
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-#        'NAME': '/Applications/DjangoStack/apps/django/django_projects/routemaster/routemaster.sqlite',
         'NAME': 'routemaster.sqlite',
     },
     'mysql': {
@@ -82,7 +81,7 @@ USE_L10N = True
 
 # Absolute path to the directory that holds media.
 # Example: "/home/media/media.lawrence.com/"
-MEDIA_ROOT = '/home/trumpcar/www/routemaster.chiditarod.org/public/media'
+MEDIA_ROOT = os.path.join(SITE_ROOT,'public','media')
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash if there is a path component (optional in other cases).

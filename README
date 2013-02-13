@@ -1,5 +1,5 @@
-Installation
-gleaned from: http://hackercodex.com/guide/python-virtualenv-on-mac-osx-mountain-lion-10.8/
+== Installation ==
+(from: http://hackercodex.com/guide/python-virtualenv-on-mac-osx-mountain-lion-10.8/)
 
 $ brew install python --with-brewed-openssl
 $ pip install virtualenv
@@ -21,7 +21,21 @@ $ cd routemaster
 $ . bin/activate
 $ cd path/to/routemaster/repo
 $ pip install -r Pipfile
+$ python manage.py runserver
 
+BINGO.
+
+=== To activate your pip environment ===
+$ cd ~/.python/Virtualenvs/routemaster
+$ . bin/activate
+$ cd -
+
+=== To use the console ===
+$ cd path/to/routemaster
+$ activate.sh
+$ python manage.py shell
+>>> from django.conf import settings
+>>> print settings.<tab>
 
 ----------------------------------------------------------------------------------------
 Helpful python shell commands
