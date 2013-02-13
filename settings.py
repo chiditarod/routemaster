@@ -41,7 +41,8 @@ DEFAULT_RARITY_THRESHOLD = 2
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': '/Applications/DjangoStack/apps/django/django_projects/routemaster/routemaster.sqlite',
+#        'NAME': '/Applications/DjangoStack/apps/django/django_projects/routemaster/routemaster.sqlite',
+        'NAME': 'routemaster.sqlite',
     },
     'mysql': {
         'ENGINE': 'django.db.backends.mysql',
