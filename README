@@ -37,6 +37,9 @@ $ python manage.py shell
 >>> from django.conf import settings
 >>> print settings.<tab>
 
+== Users ==
+devin / mush
+
 ----------------------------------------------------------------------------------------
 Helpful python shell commands
 

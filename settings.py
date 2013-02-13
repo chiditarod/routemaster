@@ -7,23 +7,12 @@ DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
-   #  ('chopper', 'dev@nuclearblender.com'),
+#  ('chopper', 'dev@nuclearblender.com'),
 )
 
 MANAGERS = ADMINS
 
-#DATABASES = {
-#    'default': {
-#        'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-#        'NAME': 'django_routemaster',                      # Or path to database file if using sqlite3.
-#        'USER': 'chiditarod',                      # Not used with sqlite3.
-#        'PASSWORD': 'mush08',                  # Not used with sqlite3.
-#        'HOST': 'mysql.nuclearblender.com',                      # Set to empty string for localhost. Not used with sqlite3.
-#        'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
-#    }
-#}
-
-# calculated paths for django and the site
+# Paths
 # used as starting points for various other paths
 # from: http://morethanseven.net/2009/02/11/django-settings-tip-setting-relative-paths.html
 # and http://www.ramavadakattu.com/top-10-tips-to-a-new-django-developer
@@ -46,7 +35,6 @@ DATABASES = {
     'mysql': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'django_routemaster',
-        #'HOST': '/Applications/DjangoStack/mysql/tmp/mysql.sock',
         'HOST': '/Applications/MAMP/tmp/mysql/mysql.sock',
         'PORT': '3306',
         #'PORT': '8889',
@@ -55,6 +43,16 @@ DATABASES = {
     }
 }
 
+#DATABASES = {
+#    'default': {
+#        'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
+#        'NAME': 'django_routemaster',                      # Or path to database file if using sqlite3.
+#        'USER': 'chiditarod',                      # Not used with sqlite3.
+#        'PASSWORD': 'mush08',                  # Not used with sqlite3.
+#        'HOST': 'mysql.nuclearblender.com',                      # Set to empty string for localhost. Not used with sqlite3.
+#        'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
+#    }
+#}
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -79,9 +77,13 @@ USE_I18N = True
 # calendars according to the current locale
 USE_L10N = True
 
+# this was needed to get the admin css to load in the pip environment
+# required by 'django.contrib.staticfiles'
+STATIC_URL = SITE_ROOT + '/public/media/'
+
 # Absolute path to the directory that holds media.
 # Example: "/home/media/media.lawrence.com/"
-MEDIA_ROOT = os.path.join(SITE_ROOT,'public','media')
+MEDIA_ROOT = SITE_ROOT + '/public/media/'
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash if there is a path component (optional in other cases).
@@ -91,7 +93,8 @@ MEDIA_URL = '/media/'
 # URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
 # trailing slash.
 # Examples: "http://foo.com/media/", "/media/".
-ADMIN_MEDIA_PREFIX = '/media/'
+#ADMIN_MEDIA_PREFIX = '/media/'
+ADMIN_MEDIA_PREFIX = '/static/admin/'
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = '13=2(_0&emtco33n5m97=q^&_7^g85_h0@zsdi52kjy9_n^^&)'
@@ -108,7 +111,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
 #    'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-#    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
 )
 
 ROOT_URLCONF = 'routemaster.urls'
@@ -130,6 +133,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.sites',
     'django.contrib.messages',
+    'django.contrib.staticfiles',
     'routemaster.races',
     #'south',
 
