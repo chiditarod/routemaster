@@ -5,7 +5,7 @@ It mostly works.
 
 
 # To Install
-Read [INSTALL.md](https://bitbucket.org/ometa/routemaster/src/HEAD/INSTALL.md)
+Read [INSTALL.md](https://bitbucket.org/ometa/routemaster/src/tip/INSTALL.md)
 
 
 
