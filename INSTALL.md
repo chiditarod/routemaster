@@ -1,7 +1,5 @@
 
 # Installation
-(from: http://hackercodex.com/guide/python-virtualenv-on-mac-osx-mountain-lion-10.8/)
-
     $ brew install python --with-brewed-openssl
     $ pip install virtualenv
     $ mkdir ~/.python/Virtualenvs
@@ -23,5 +21,7 @@
     $ pip install -r Pipfile
     $ python manage.py runserver
 
-BOOSH.
+### BOOSH.
+
+gleaned from [hackercodex](http://hackercodex.com/guide/python-virtualenv-on-mac-osx-mountain-lion-10.8/)
 
