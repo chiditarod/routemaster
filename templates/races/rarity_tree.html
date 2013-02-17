@@ -12,17 +12,34 @@
 {% else %}
 
 	<h2>Race: {{race.name}}</h2>
-	<h3>From {{race.checkpoint_start.name}} to {{race.checkpoint_finish.name}}</h3>
+  <h3>Rarity Threshold: {{rarity_threshold}}</h3>
 
-    <table>
-        <tr><th>Rarity</th><th>Order</th><th>Checkpoint</th><th>Route</th></tr>
-	    {% for d in rarityTree %}
-	        <tr>
-	            <td>{{d.rarity}}</td><td>{{d.order}}</td><td>{{d.checkpoint}}</td><td>{{d.route}}</td>
-			</tr>
-		{% endfor %}
-	</table>
-	
+
+  <table class="races">
+    <tr>
+      <th>Checkpoint</th>
+      <th>Pos</th>
+      <th>Rarity</th>
+      <th>Length</th>
+      <th>Teams</th>
+      <th>Comfortable</th>
+      <th>Legal</th>
+      <th>Path</th>
+    </tr>
+	  {% for d in rarityTree %}
+      <tr>
+        <td>{{d.checkpoint}}</td>
+        <td>{{d.order}}</td>
+	      <td>{{d.rarity}} times</td>
+        <td>{{d.route.length}} {{d.route.race.measurement_system}}</td>
+        <td>{{d.route.teams_comfortable}}</td>
+        <td class="center">{{d.route.capacity_comfortable}}</td>
+        <td class="center">{{d.route.capacity_max}}</td>
+        <td>{{d.route.getPath}}</td>
+      </tr>
+    {% endfor %}
+  </table>
+
 {% endif %}
 
 {% endblock %}

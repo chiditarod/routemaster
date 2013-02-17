@@ -6,14 +6,27 @@
         {% block extrahead %}{% endblock %}
 		<style>
 			body {
-				background: #ccc;
+				background: #eee;
+        font-family: "Consolas", "Calibri", Sans, "Courier New";
+        font-size: 8px;
 			}
+      table.races tr th {
+        border-bottom: 1px black solid;
+      }
+      table.races tr td {
+        text-align: left;
+        padding: 5px;
+      }
+      .center {
+        text-align: center;
+      }
 		</style>
     </head>
     <body>
         <h1 id="top">{% block h1 %}{% endblock %}</h1>
+        <p><a href="/races/">Back to home</a></p>
         {% block content %}{% endblock %}
         <hr>
-        <p><a href="/">Back to home</a>.</p>
+        <p><a href="/races/">Back to home</a></p>
     </body>
  </html>

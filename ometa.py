@@ -17,6 +17,8 @@ from django.conf import settings
 import operator
 import timeit
 from itertools import permutations
+from operator import itemgetter, attrgetter
+
 #from copy import copy
 
 
@@ -28,7 +30,7 @@ class RaceBuilder(object):
     def ip(self, x, str):
         s = ''
         for i in range(x):
-            s += "\t"
+            s += "  "
 
         self.output.write("%s%s\n" % (s, str))
         print "%s%s" % (s, str)
@@ -77,9 +79,14 @@ class RaceBuilder(object):
 
             # check for bad distance
             if (leg.distance > race.max_leg_distance):
-                self.ip(x,"\tFAIL: %s distance > max leg distance %s" % (leg.distance, race.max_leg_distance))
+                self.ip(x,"  FAIL: %s distance > max: %s" % (leg.distance, race.max_leg_distance))
                 continue
-            self.ip(x,"\tPASS: %s distance <= max leg distance %s" % (leg.distance, race.max_leg_distance))
+            self.ip(x,"  PASS: %s distance <= max: %s" % (leg.distance, race.max_leg_distance))
+
+            if (leg.distance < race.min_leg_distance):
+                self.ip(x,"  FAIL: %s distance < min: %s" % (leg.distance, race.min_leg_distance))
+                continue
+            self.ip(x,"  PASS: %s distance >= min:%s" % (leg.distance, race.min_leg_distance))
 
             # ensure that checkpoint b is not disabled
             if (leg.checkpoint_b.enabled == False):
@@ -91,7 +98,7 @@ class RaceBuilder(object):
                 self.ip(x,'\tFAIL: %s = starting line.  Cannot be a checkpoint.' % leg.checkpoint_b.name)
                 continue
 
-            self.ip(x,"\tPASS: %s != the starting line" % (leg.checkpoint_b.name))
+            self.ip(x,"  PASS: %s != the starting line" % (leg.checkpoint_b.name))
 
             # additional checks when a route exists
             if route:
@@ -118,9 +125,9 @@ class RaceBuilder(object):
                 # if adding this leg makes the total distance too far
                 potentialDistance = route.getLength() + leg.distance
                 if potentialDistance > race.max_race_distance:
-                    self.ip(x,"\tFAIL: %s distance > max race distance %s" % (potentialDistance, race.max_race_distance))
+                    self.ip(x,"  FAIL: %s distance > max race distance %s" % (potentialDistance, race.max_race_distance))
                     continue
-                self.ip(x,"\tPASS: %s distance < max race distance %s" % (potentialDistance, race.max_race_distance))
+                self.ip(x,"  PASS: %s distance < max race distance %s" % (potentialDistance, race.max_race_distance))
 
                 # fail if checkpoint_b is already used
                 bad=False
@@ -144,6 +151,7 @@ class RaceBuilder(object):
             # TODO: check for duplicate first.  see:
             #   https://docs.djangoproject.com/en/1.2/topics/db/queries/#query-expressions
             #   http://stackoverflow.com/questions/2055626/filter-many-to-many-relation-in-django
+            route.length = route.getLength()
             route.save()
             route.routelegnode_set.add(node)
 
@@ -161,7 +169,7 @@ class RaceBuilder(object):
                     self.ip(x,'[ WIN ] %s' % route)
                     # copy our route (and the intermediate models) and save it to the route table.
                     route_copy = route.clone()
-
+                    # TODO: check for duplicate first.  see:
                     race.routes.add(route_copy)
                     race.save()
 
@@ -227,7 +235,6 @@ class RaceBuilder(object):
         route.capacity_max = capMaximum
         route.save()
         return capComfortable, capMaximum
-
 
     def addRouteCapacities(self, race):
         """Add capacities into the database for each route stored in a race."""
@@ -427,8 +434,9 @@ class RaceBuilder(object):
 
 
     def rarityTree(self, race, rarityThreshold):
-        print "Rarity Tree for Race: %s" % race
         """Figure out the least-frequent checkpoint/position pairs repeated for all routes and pull their routes."""
+        print "Rarity Tree for Race: %s" % race
+        print "total routes to examine: %s" % race.routes.count()
 
         preferredRoutes = list()
 
@@ -453,7 +461,10 @@ class RaceBuilder(object):
                 else:
                     a[x][key] = 1
 
+        for x, pos in enumerate(a):
+            print "%s: %s" % (x, pos)
         rarityTree = list()             # init our result list
+
         # iterate through each checkpoint position
         for x, row in enumerate(a):
             print "\n[position %s]" % (x)
@@ -468,37 +479,32 @@ class RaceBuilder(object):
             i = sortedPairs[y][0]       # initial value
 
             while (i <= rarityThreshold):
-                print "x: %s, y: %s, i: %s" % (x,y,i)
+                #print "pos: %s, y: %s, i: %s" % (x,y,i)
                 checkpoint_id = sortedPairs[y][1] # grab the checkpoint name from the tuple.
                 checkpoint = Checkpoint.objects.get(id__exact=checkpoint_id)
-                print "checkpoint: %s" % (checkpoint.name)
+                print "freq: %s.  checkpoint: %s (id: %s) appears in position %s" % (i, checkpoint.name, checkpoint.pk, x)
                 # filter routes: choose the routes that have 'checkpoint' in order 'x'.
                 # TODO 2013 - this call below is showing disabled checkpoints.  WTF.
-                routes = Route.objects.filter(routelegs__checkpoint_b__pk=checkpoint_id).filter(routelegnode__order=x)\
-                                      .filter(routelegs__checkpoint_a__enabled=True).filter(routelegs__checkpoint_b__enabled=True)\
+                routes = Route.objects.filter(race=race)\
+                                      .filter(routelegnode__order=x, routelegs__checkpoint_b__pk=checkpoint_id)\
                                       .distinct()
+
+                print "found %s routes" % routes.count()
+
                 print ''
-                print "Found %s routes:" % routes.count()
+                #print "Found %s routes:" % routes.count()
                 for r in routes:
                     # update the rarity for this route
                     r.rarity = i
                     r.save()
-                    rarityTree.append({'order': x, 'rarity':i, 'route':r, 'checkpoint':checkpoint})
-                    print r
+                    rarityTree.append({'order': x+1, 'rarity':i, 'route':r, 'checkpoint':checkpoint})
+                    #print r.getPath()
                 y += 1
                 i = sortedPairs[y][0]
 
             else:
-                print "%s was greater than rarity threshold: %s" % (i, rarityThreshold)
+                print "freq: %s.  Threshold of %s reached.  Moving on." % (i, rarityThreshold)
 
         #print rarityTree
-        return rarityTree
-
-
-
-
-
-
-
-
+        return sorted(rarityTree)
 

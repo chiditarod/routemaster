@@ -10,20 +10,52 @@
 {% if not race %}
 	<p>Problem getting race for race_id: {{race_id}}</p>
 {% else %}
-	<h1>Race: {{race.name}}</h1>
-	<h2>From {{race.checkpoint_start.name}} to {{race.checkpoint_finish.name}}</h2>
+	<h2>Race: {{race.name}}</h2>
+	Repeat checkpoints for this query: {{repeat_qty}}
 
-	<h3>Repeat checkpoints allowed: {{repeat_qty}}</h3>
+	<h3>Uniques</h3>
 
-	<h3>Used Routes</h3>
-	{% for r in used_routes %}
-		{{ r }}<br/>
-	{% endfor %}
+  <table class="races">
+    <tr>
+      <th colspan="2">Length</th>
+      <th>Teams</th>
+      <th>Comfortable</th>
+      <th>Legal</th>
+      <th>Path</th>
+    </tr>
+	  {% for r in used_routes %}
+      <tr>
+        <td>{{r.length}}</td>
+        <td>{{race.measurement_system}}</td>
+        <td>{{r.teams_comfortable}}</td>
+        <td class="center">{{r.capacity_comfortable}}</td>
+        <td class="center">{{r.capacity_max}}</td>
+        <td>{{r.getPath}}</td>
+      </tr>
+    {% endfor %}
+  </table>
 	
-	<h3>Deferred Routes</h3>
-	{% for r in deferred_routes %}
-		{{ r }}<br/>
-	{% endfor %}
+	<h3>Others</h3>
+  <table class="races">
+    <tr>
+      <th colspan="2">Length</th>
+      <th>Teams</th>
+      <th>Comfortable</th>
+      <th>Legal</th>
+      <th>Path</th>
+    </tr>
+	  {% for r in deferred_routes %}
+      <tr>
+        <td>{{r.length}}</td>
+        <td>{{race.measurement_system}}</td>
+        <td>{{r.teams_comfortable}}</td>
+        <td class="center">{{r.capacity_comfortable}}</td>
+        <td class="center">{{r.capacity_max}}</td>
+        <td>{{r.getPath}}</td>
+      </tr>
+    {% endfor %}
+  </table>
+
 
 {% endif %}
 	

@@ -135,6 +135,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'routemaster.races',
+    #'bootstrapped'
     #'south',
 
 )

@@ -18,9 +18,8 @@
 
     $ cd ~/.python/Virtualenvs
     $ virtualenv routemaster
-    $ cd routemaster
-    $ . bin/activate
     $ cd path/to/routemaster/repo
+    $ . ~/.python/Virtualenvs/routemaster/bin/activate
     $ pip install -r Pipfile
     $ python manage.py runserver
 

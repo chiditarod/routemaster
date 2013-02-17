@@ -28,8 +28,8 @@ class CloneableModel(models.Model):
 
 class Race(models.Model):
     DISTANCE_CHOICES = (
-        (u'miles', u'Miles'),
-        (u'km', u'Kilometers'),
+        (u'miles', u'mi'),
+        (u'km', u'km'),
     )
     name = models.CharField(max_length=60)
     date = models.DateField()
@@ -39,18 +39,28 @@ class Race(models.Model):
     min_race_distance = models.DecimalField(max_digits=3, decimal_places=2)
     max_race_distance = models.DecimalField(max_digits=3, decimal_places=2)
     max_leg_distance = models.DecimalField(max_digits=3, decimal_places=2)
+    min_leg_distance = models.DecimalField(max_digits=3, decimal_places=2)
     checkpoint_start = models.ForeignKey('Checkpoint', related_name='races_starting_here')
     checkpoint_finish = models.ForeignKey('Checkpoint', related_name='races_finishing_here')
     # TODO: Change to route_legs
     checkpoint_qty = models.IntegerField('Total Legs (checkpoints + finish)')
     measurement_system = models.CharField(max_length=5, choices=DISTANCE_CHOICES)
-    
+
     def __unicode__(self):
         return "%s" % (self.name)
 
     def getroutes(self):
         return Route.objects.filter(race=self).all()
-    
+        return self.routes.order_by('getPath', '-miles')
+
+    def getroutes_by_length(self):
+        return self.routes.order_by('length')
+
+    def getroutes_by_capacity(self):
+        return self.routes.order_by('-capacity_comfortable', 'length')
+
+    def getroutes_by(self, sortfield):
+        return self.routes.order_by(sortfield)
 
 class Checkpoint(models.Model):
     name = models.CharField(max_length=60)
@@ -97,17 +107,18 @@ class Route(models.Model):
     """Route Model"""
     name = models.CharField(max_length=60)
     race = models.ForeignKey('Race', related_name='routes', blank=True)
-    routelegs = models.ManyToManyField('RouteLeg', through='RouteLegNode', related_name='routelegs')
+    routelegs = models.ManyToManyField('RouteLeg', through='RouteLegNode', related_name='route')
     checkpoint_start = models.ForeignKey('Checkpoint', related_name='start_for_route')
     checkpoint_finish = models.ForeignKey('Checkpoint', related_name='finish_for_route')
     capacity_comfortable = models.IntegerField(blank=True, default=settings.DEFAULT_CAPACITY_COMFORTABLE)
     capacity_max = models.IntegerField(blank=True, default=settings.DEFAULT_CAPACITY_MAXIMUM)
     selected = models.BooleanField()
     rarity = models.IntegerField(blank=True, default=100)
-    
+    length = models.DecimalField(max_digits=5, decimal_places=2)
+
     class Meta:
         ordering = ['-selected', 'rarity']
-        
+
     def getLength(self):
         """return total length of route"""
     	total = 0
@@ -115,35 +126,37 @@ class Route(models.Model):
     		total += r.routeleg.distance
     	return total
 
-    def __unicode__(self):
-        o = ''
+    def teams_comfortable(self):
+        return self.capacity_comfortable / self.race.num_people_per_team
+
+    def getPath(self):
+        path = ''
         last = ''
         try:
             for r in self.routelegs.all():
                 if r.checkpoint_a.name != last:
-                    o += r.checkpoint_a.name
-                o += "\t\t ---%s---> " % (r.distance)
-                o += r.checkpoint_b.name
+                    path += r.checkpoint_a.name
+                path += " [ %s ] " % (r.distance)
+                path += r.checkpoint_b.name
                 last = r.checkpoint_b.name
-            # else:
-            #    o = "No RouteLegs"
+            return path
         except Exception, e:
             return "Exception thrown!"
-        
-        if self.selected:
-            out = "* "
-        else:
-            out = ''
-        out += u"[%s %s" %  (self.getLength(), self.race.measurement_system)
-        
+
+    def __unicode__(self):
+
+        out = ''
+        out = u"* " if self.selected else u''
+        out += u"%s %s] " %  (self.length, self.race.measurement_system)
+
         if self.capacity_comfortable < settings.DEFAULT_CAPACITY_COMFORTABLE and self.capacity_max < settings.DEFAULT_CAPACITY_MAXIMUM:
-            out += u", comfort: %s, legal: %s" % (self.capacity_comfortable, self.capacity_max)
-        if self.rarity:
-            out += u", %s rarity" % self.rarity
-        out += "] %s" % o
-        
+            out += u"comfort: %s, legal: %s] \t " % (self.capacity_comfortable, self.capacity_max)
+        #if self.rarity:
+            #out += " u[%s rare] " % self.rarity
+        #out += self.getPath()
+
         return out
-        
+
     def clone(self):
         """Return an identical copy of the instance with a new ID.  copies M2M relationships with 'through' intermediate model."""
         if not self.pk:
@@ -158,7 +171,7 @@ class Route(models.Model):
             duplicate.routelegnode_set.add(rln)
         duplicate.save()
         return duplicate
-    
+
     def hasRoutelegs(self):
         try:
             if self.routelegnode_set.count() > 0:
