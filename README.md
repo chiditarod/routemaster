@@ -3,10 +3,12 @@
 Route generator software for Chiditarod.
 It mostly works.
 
-## To Install
+
+# To Install
 Read INSTALL.md
 
 
+# Helpful things
 ### Useful URLs
 
 http://localhost:8000/admin     - Configure the races, checkpoints, etc
