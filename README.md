@@ -11,9 +11,8 @@ Read [INSTALL.md](https://bitbucket.org/ometa/routemaster/src/tip/INSTALL.md)
 
 # Helpful things
 ### Useful URLs
-
-http://localhost:8000/admin     - Configure the races, checkpoints, etc
-http://localhost:8000/races     - Run the calculations
+- http://localhost:8000/admin     - Configure the races, checkpoints, etc
+- http://localhost:8000/races     - Run the calculations
 
 ### To activate your virtualenv environment
 
