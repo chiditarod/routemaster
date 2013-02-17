@@ -34,7 +34,7 @@
       <th>Legal</th>
       <th>Path</th>
     </tr>
-    {% for r in race.getroutes %}
+    {% for r in race.getroutes_by_capacity %}
       <tr>
         <td>{{r.length}}</td>
         <td>{{race.measurement_system}}</td>

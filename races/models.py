@@ -50,8 +50,7 @@ class Race(models.Model):
         return "%s" % (self.name)
 
     def getroutes(self):
-        return Route.objects.filter(race=self).all()
-        return self.routes.order_by('getPath', '-miles')
+        return self.routes.order_by('getPath', '-length')
 
     def getroutes_by_length(self):
         return self.routes.order_by('length')
