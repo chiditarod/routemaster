@@ -31,17 +31,14 @@ def list_races(request):
 
 
 def race_detail(request, race_id):
-    error = None
     try:
         race = Race.objects.get(id=race_id)
         if not race:
-            error = 'notfound'
-            return render_to_response('races/race_detail.html', {'error': error, 'race_id': race_id})
+            return render_to_response('races/race_detail.html', {'error': "notfound", 'race_id': race_id})
         else:
             return render_to_response('races/race_detail.html', {'race': race})
     except DoesNotExist, e:
-        error = 'notfound'
-        return render_to_response('races/race_detail.html', {'error': error, 'race_id': race_id})
+        return render_to_response('races/race_detail.html', {'error': "notfound", 'race_id': race_id})
     except Exception, e:
         raise e
 

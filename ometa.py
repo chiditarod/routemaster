@@ -24,45 +24,45 @@ class RaceBuilder(object):
 
     def __init__(self):
         self.output = HttpResponse(content_type="text/plain")
-    
+
     def ip(self, x, str):
         s = ''
         for i in range(x):
             s += "\t"
-            
+
         self.output.write("%s%s\n" % (s, str))
         print "%s%s" % (s, str)
 
     def buildRoutesForRace(self, race_id):
         """main function to build an entire race, given a start and finish point. calls our recursion."""
-        
+
         race = Race.objects.get(id=race_id)
-                    
+
         # start building routes using each potential routeleg
         self.ip(0, '[race] %s  [start] %s' % (race.name, race.checkpoint_start.name))
-        legs = RouteLeg.objects.filter(checkpoint_a__name="%s" % race.checkpoint_start.name)  
+        legs = RouteLeg.objects.filter(checkpoint_a__name="%s" % race.checkpoint_start.name).exclude(checkpoint_b__enabled=False)
         self.ip(0, 'found %i legs' % len(legs))
-        
+
         race = self.buildRoute(race, legs)
         self.ip(0, "num routes found: %i" % race.routes.count())
         return race, self.output
 
-    
+
     def buildRoute(self, race, legs, route = None):
         """primary recursive function"""
-        
+
         # capture the route as-is before trying to add on new legs
         initialRoute = route
         x = 0
         y = 0
-        
+
         # iterate through all potential legs
         for leg in legs:
             y = y + 1
-            
+
             # reset the route to what is was leading into each new leg
             route = initialRoute
-            
+
             # make a new route if we weren't passed one via recursion.
             if not route:
                 route = Route()
@@ -70,33 +70,37 @@ class RaceBuilder(object):
                 route.race = race
                 route.checkpoint_start = race.checkpoint_start
                 route.checkpoint_finish = race.checkpoint_finish
-#                route.is_valid = False
                 self.ip(x,'[NEW ROUTE] %s' % route.name)
 
             x = route.countRoutelegs()
             self.ip(x,"Trying %s for route: %s" % (leg, route))
-        
+
             # check for bad distance
             if (leg.distance > race.max_leg_distance):
                 self.ip(x,"\tFAIL: %s distance > max leg distance %s" % (leg.distance, race.max_leg_distance))
                 continue
             self.ip(x,"\tPASS: %s distance <= max leg distance %s" % (leg.distance, race.max_leg_distance))
 
+            # ensure that checkpoint b is not disabled
+            if (leg.checkpoint_b.enabled == False):
+                self.ip(x, '\tFAIL: %s is disabled.  Skipping.' % leg.checkpoint_b.name)
+                continue
+
             # checkpoint_b should never be the starting line
             if (leg.checkpoint_b == race.checkpoint_start):
                 self.ip(x,'\tFAIL: %s = starting line.  Cannot be a checkpoint.' % leg.checkpoint_b.name)
                 continue
-                
+
             self.ip(x,"\tPASS: %s != the starting line" % (leg.checkpoint_b.name))
-                
+
             # additional checks when a route exists
             if route:
                 numlegs = route.countRoutelegs() 
-                
+
                 if (numlegs > race.checkpoint_qty):
                     self.ip(x,'\tERROR: numlegs = %s > %s (checkpoint qty).  Should not happen.' % (numlegs, race.checkpoint_qty + 1))
                     continue
-                    
+
                 # finish line checks
                 if (leg.checkpoint_b == race.checkpoint_finish):
                     if (numlegs < race.checkpoint_qty - 1):
@@ -110,14 +114,14 @@ class RaceBuilder(object):
                         continue
                     else:
                         self.ip(x,'\tPASS: %s != finish line, route is %i/%i full' % (leg.checkpoint_b.name, numlegs, race.checkpoint_qty))
-                            
+
                 # if adding this leg makes the total distance too far
                 potentialDistance = route.getLength() + leg.distance
                 if potentialDistance > race.max_race_distance:
                     self.ip(x,"\tFAIL: %s distance > max race distance %s" % (potentialDistance, race.max_race_distance))
                     continue
                 self.ip(x,"\tPASS: %s distance < max race distance %s" % (potentialDistance, race.max_race_distance))
-                
+
                 # fail if checkpoint_b is already used
                 bad=False
                 for r in route.routelegnode_set.all():
@@ -142,13 +146,13 @@ class RaceBuilder(object):
             #   http://stackoverflow.com/questions/2055626/filter-many-to-many-relation-in-django
             route.save()
             route.routelegnode_set.add(node)
-            
+
             # ---------------------------------------------
             # WINNING CONDITION!!!
-            
+
             # these are the conditions for a winning route.  additional tests are applied within.
             if (route.countRoutelegs() == race.checkpoint_qty) and (leg.checkpoint_b == race.checkpoint_finish):
-                
+
                 # additional tests that only apply to a completed route
                 if route.getLength() < race.min_race_distance:
                     self.ip(x,'\tFAIL: %s distance < min race distance %s' % (route.getLength(), race.min_race_distance))
@@ -157,16 +161,16 @@ class RaceBuilder(object):
                     self.ip(x,'[ WIN ] %s' % route)
                     # copy our route (and the intermediate models) and save it to the route table.
                     route_copy = route.clone()
-            
+
                     race.routes.add(route_copy)
                     race.save()
-                                
+
                 # slide the highest node off the route, regardless of whether or not we saved it
                 self.sliceLatestNode(route, x)
-                
+
             else:
                 # ok, so we didn't win, but we have a leg that's not failing out.  Pursue additional recursion. 
-                
+
                 # i don't think the if below will ever run...
                 if (route.countRoutelegs() == race.checkpoint_qty):
                     self.ip(x,'Route has enough legs.  Not recursing further.')
@@ -175,25 +179,25 @@ class RaceBuilder(object):
                     self.ip(x,'[sublegs] found %i' % len(sublegs))
                     # recurrrrrsion!
                     race = self.buildRoute(race, sublegs, route)
-                
+
 
         # ROUTE FAIL.  Remove the most recent node and move on.    
         if route: # and not route in race.routes.all():
             # delete the latest node
             self.ip(x,"[END OF ROUTE POTENTIAL]")
             self.sliceLatestNode(route, x)
-            
+
             # check to see if our route is length=0. if so, delete it
             if (route.countRoutelegs() == 0):
                 self.ip(x,"Deleting route containing 0 nodes")  
                 # we only have to delete the route if it's not already in the DB          
                 if route.id is not None:
                     route.delete()
-        
+
         # return our completed race object.
         self.ip(x,"returning race")            
         return race
-        
+
 
     def sliceLatestNode(self, route, x):
         """Slices off the most recent routelegnode from a route"""
@@ -205,8 +209,8 @@ class RaceBuilder(object):
                 deleteNode.delete()
         except Exception, e:
             self.ip(x, "[SLICE NODE] No node to delete OR problem.")
-            
-    
+
+
     def addCapacityToRoute(self, route):
         """Go through each checkpoint in a route and calculate the max and comfortable capacity for the entire route."""
         capComfortable = settings.DEFAULT_CAPACITY_COMFORTABLE
@@ -223,8 +227,8 @@ class RaceBuilder(object):
         route.capacity_max = capMaximum
         route.save()
         return capComfortable, capMaximum
-        
-        
+
+
     def addRouteCapacities(self, race):
         """Add capacities into the database for each route stored in a race."""
         count = 0
@@ -232,16 +236,16 @@ class RaceBuilder(object):
             self.addCapacityToRoute(r)
             count += 1
         return count
-    
-    
+
+
     def deleteRoutesInRace(self, race):
         """Delete all routes attached to a particular race."""
         r = Route.objects.filter(race=race)
         routesToDelete = r.count()
         r.all().delete()
         return "Deleted %s routes from %s" % (routesToDelete, race)
-    
-    
+
+
     def findUniqueRoutes(self, race, repeat_qty = 0):
         """Choose the routes that don't overlap any checkpoints in each respective routeleg position.  Repeats are allowed via a variable."""
         used_routes = []
@@ -249,26 +253,26 @@ class RaceBuilder(object):
         positions = race.checkpoint_qty - 1 # subtract one so we don't include the finish line.
         # make a list of lists, 'positions' in length
         a = list(list() for i in range(positions))
-        
+
         # iterate through all routes in the race
         for route in race.routes.all():
 
             ok = True
             print "processing route id: %s" % route.id
-        
+
             # temp list b, a list of lists
             b = list(list() for i in range(positions))
-            
+
             # iterate through all checkpoints in each route
             for x, leg in enumerate(route.routelegs.all()):
-                
+
                 # if we're evaluating the finish line, skip (since the finish is always the same)
                 if (x == positions):
                     break
-                    
+
                 print "a[%s] is: %s" % (x, a[x])
                 print "leg is: %s" % leg
-                
+
                 # not used
                 if leg.checkpoint_b not in a[x]:
                     print "checkpoint %s is not yet used as checkpoint %s.  Add it to our temp list, b\n" % (leg.checkpoint_b, x)
@@ -283,7 +287,7 @@ class RaceBuilder(object):
                     deferred_routes.append(route)
                     ok = False
                     break
-            
+
             # if we made it this far, add our temp list b to our master list a
             # TODO: there must be a cleaner way of doing this other than checkpoint[0]
             if ok:
@@ -291,20 +295,20 @@ class RaceBuilder(object):
                     if len(checkpoint):
                         print "appending: %s %s\n" % (x, checkpoint)
                         a[x].append(checkpoint[0])
-            
+
                 # add this route to our used route list.
                 used_routes.append(route)
-            
+
         print ""
         for i in a:
             print "%s" % i
         print ""
-            
+
         print "used_routes: %s" % len(used_routes)
         print "deferred_routes: %s" % len(deferred_routes)
 
         return used_routes, deferred_routes
-    
+
 
 
 
@@ -312,9 +316,9 @@ class RaceBuilder(object):
         """Choose the routes that don't overlap any checkpoints in each respective routeleg position.  Repeats are allowed via a variable."""
 
         #timer = Timer()
-        
+
         maxUnique = 0
-        
+
         # build a list of all potential combinations of routes.
         all_route_combos = permutations(race.routes.all())
 
@@ -324,12 +328,12 @@ class RaceBuilder(object):
 #        print "total permutations: %s" % n
 
         master_results = list()
-        
+
         for n, routeset in enumerate(all_route_combos):
 
             if n % 100 == 0:
                 print "processing routeset: %s" % n
-            
+
             used_routes = []
  #           deferred_routes = []
             positions = race.checkpoint_qty - 1 # subtract one so we don't include the finish line.
@@ -401,12 +405,12 @@ class RaceBuilder(object):
                 print "routeset %s: # of unique routes (%s) > current maxUnique value (%s)" % (n, len(used_routes), maxUnique)
                 maxUnique = len(used_routes)
                 master_results.append( (len(used_routes),used_routes) )
-        
+
         return master_results
-    
+
 # ======================================================================================    
-    
-    
+
+
     def checkpointFrequency(self, routes):
         """Count up how many times each checkpoint appears in a list of routes."""
         counts = dict()
@@ -420,27 +424,28 @@ class RaceBuilder(object):
                     counts[str(leg.checkpoint_b.name)] = 1
         s = sorted(counts.iteritems(), key=operator.itemgetter(1))
         return s
-    
-    
+
+
     def rarityTree(self, race, rarityThreshold):
+        print "Rarity Tree for Race: %s" % race
         """Figure out the least-frequent checkpoint/position pairs repeated for all routes and pull their routes."""
 
         preferredRoutes = list()
-        
+
         positions = race.checkpoint_qty - 1 # subtract one so we don't include the finish line.
         # make a list of lists, 'positions' in length
         a = list(dict() for i in range(positions))
-        
+
         # iterate through all routes in the race
         for route in race.routes.all():
-        
+
             # iterate through all checkpoints in each route
             for x, leg in enumerate(route.routelegs.all()):
-            
+
                 # if we're evaluating the finish line, skip (since the finish is always the same)
                 if (x == positions):
                     break
-    
+
                 # build an index of each checkpoint position.  put a dict of checkpoint/occurence frequency values in each.
                 key = str(leg.checkpoint_b.pk)
                 if key in a[x]:
@@ -454,11 +459,11 @@ class RaceBuilder(object):
             print "\n[position %s]" % (x)
             # convert dict checkpoint/occurence list into sortable tuples.
             pairs = zip(row.values(), row.keys())
-            
+
             # sort the least-occuring position/checkpoint combos first
             sortedPairs = sorted(pairs)
             print sortedPairs
-            
+
             y = 0                       # for moving upwards in the rarity threshold
             i = sortedPairs[y][0]       # initial value
 
@@ -468,7 +473,10 @@ class RaceBuilder(object):
                 checkpoint = Checkpoint.objects.get(id__exact=checkpoint_id)
                 print "checkpoint: %s" % (checkpoint.name)
                 # filter routes: choose the routes that have 'checkpoint' in order 'x'.
-                routes = Route.objects.filter(routelegs__checkpoint_b__pk=checkpoint_id, routelegnode__order=x).distinct()
+                # TODO 2013 - this call below is showing disabled checkpoints.  WTF.
+                routes = Route.objects.filter(routelegs__checkpoint_b__pk=checkpoint_id).filter(routelegnode__order=x)\
+                                      .filter(routelegs__checkpoint_a__enabled=True).filter(routelegs__checkpoint_b__enabled=True)\
+                                      .distinct()
                 print ''
                 print "Found %s routes:" % routes.count()
                 for r in routes:
@@ -479,18 +487,18 @@ class RaceBuilder(object):
                     print r
                 y += 1
                 i = sortedPairs[y][0]
-                
+
             else:
-                print "%s was greater than %s" % (i, rarityThreshold)
-            
-        print rarityTree
+                print "%s was greater than rarity threshold: %s" % (i, rarityThreshold)
+
+        #print rarityTree
         return rarityTree
-                
-                
-                
-                
-                
-                
-                
-                
-    
+
+
+
+
+
+
+
+
+

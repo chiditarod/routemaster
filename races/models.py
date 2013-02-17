@@ -46,7 +46,7 @@ class Race(models.Model):
     measurement_system = models.CharField(max_length=5, choices=DISTANCE_CHOICES)
     
     def __unicode__(self):
-        return "%s [ %s ==> %s ]" % (self.name, self.checkpoint_start.name, self.checkpoint_finish.name)
+        return "%s" % (self.name)
 
     def getroutes(self):
         return Route.objects.filter(race=self).all()
@@ -61,10 +61,11 @@ class Checkpoint(models.Model):
     state_province = models.CharField(max_length=30)
     lat = models.DecimalField(max_digits=10, decimal_places=2, blank=True, default='0')
     lon = models.DecimalField(max_digits=10, decimal_places=2, blank=True, default='0')
+    enabled = models.BooleanField(default=True)
 
     def __unicode__(self):
         return "%s" % (self.name)
-        
+
     @property
     def getName(self):
         return "%s" % (self.name)
@@ -76,7 +77,7 @@ class RouteLeg(models.Model):
     distance = models.DecimalField(max_digits=5, decimal_places=2)
     
     def __unicode__(self):
-        return u'[ %s ] %s -> %s' % (float(self.distance), self.checkpoint_a.name, self.checkpoint_b.name)
+        return u'[ %s ] %s, %s' % (float(self.distance), self.checkpoint_a.name, self.checkpoint_b.name)
 
 
 class RouteLegNode(models.Model):
@@ -89,7 +90,7 @@ class RouteLegNode(models.Model):
         ordering = ['order']
 
     def __unicode__(self):
-        return "Node %i of %s: %s --> %s" % (self.order, self.parent_route.name, self.routeleg.checkpoint_a, self.routeleg.checkpoint_b) 
+        return "Node %i of %s: %s, %s" % (self.order, self.parent_route.name, self.routeleg.checkpoint_a, self.routeleg.checkpoint_b) 
 
 
 class Route(models.Model):
@@ -121,7 +122,7 @@ class Route(models.Model):
             for r in self.routelegs.all():
                 if r.checkpoint_a.name != last:
                     o += r.checkpoint_a.name
-                o += ' -> ' 
+                o += "\t\t ---%s---> " % (r.distance)
                 o += r.checkpoint_b.name
                 last = r.checkpoint_b.name
             # else:
@@ -136,7 +137,7 @@ class Route(models.Model):
         out += u"[%s %s" %  (self.getLength(), self.race.measurement_system)
         
         if self.capacity_comfortable < settings.DEFAULT_CAPACITY_COMFORTABLE and self.capacity_max < settings.DEFAULT_CAPACITY_MAXIMUM:
-            out += u", %s comfort, %s max" % (self.capacity_comfortable, self.capacity_max)
+            out += u", comfort: %s, legal: %s" % (self.capacity_comfortable, self.capacity_max)
         if self.rarity:
             out += u", %s rarity" % self.rarity
         out += "] %s" % o

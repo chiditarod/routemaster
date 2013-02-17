@@ -16,11 +16,9 @@ urlpatterns = patterns('',
 
     # Site Root
     #(r'^$', homepage),
-    (r'^time/plus/(\d{1,2})/$', hours_ahead),
-    (r'^current_time/$', current_datetime),
-
-    # (r'^routemaster/', include('routemaster.foo.urls')),
-    (r'^hello/', hello),
+    #(r'^time/plus/(\d{1,2})/$', hours_ahead),
+    #(r'^current_time/$', current_datetime),
+    #(r'^hello/', hello),
 )
 
 # race URLs
