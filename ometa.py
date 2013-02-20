@@ -148,10 +148,6 @@ class RaceBuilder(object):
             self.ip(x,'[NEW NODE] %s [order: %s]' % (node, node.order))
 
             # add the new node to the route
-            # TODO: check for duplicate first.  see:
-            #   https://docs.djangoproject.com/en/1.2/topics/db/queries/#query-expressions
-            #   http://stackoverflow.com/questions/2055626/filter-many-to-many-relation-in-django
-            route.length = route.getLength()
             route.save()
             route.routelegnode_set.add(node)
 
@@ -170,6 +166,9 @@ class RaceBuilder(object):
                     # copy our route (and the intermediate models) and save it to the route table.
                     route_copy = route.clone()
                     # TODO: check for duplicate first.  see:
+                    #   https://docs.djangoproject.com/en/1.2/topics/db/queries/#query-expressions
+                    #   http://stackoverflow.com/questions/2055626/filter-many-to-many-relation-in-django
+                    route_copy.length = route_copy.getLength()
                     race.routes.add(route_copy)
                     race.save()
 
@@ -179,7 +178,7 @@ class RaceBuilder(object):
             else:
                 # ok, so we didn't win, but we have a leg that's not failing out.  Pursue additional recursion. 
 
-                # i don't think the if below will ever run...
+                # This case should not occur
                 if (route.countRoutelegs() == race.checkpoint_qty):
                     self.ip(x,'Route has enough legs.  Not recursing further.')
                 else:
@@ -189,7 +188,7 @@ class RaceBuilder(object):
                     race = self.buildRoute(race, sublegs, route)
 
 
-        # ROUTE FAIL.  Remove the most recent node and move on.    
+        # ROUTE FAIL.  Remove the most recent node and move on.
         if route: # and not route in race.routes.all():
             # delete the latest node
             self.ip(x,"[END OF ROUTE POTENTIAL]")
@@ -197,13 +196,13 @@ class RaceBuilder(object):
 
             # check to see if our route is length=0. if so, delete it
             if (route.countRoutelegs() == 0):
-                self.ip(x,"Deleting route containing 0 nodes")  
-                # we only have to delete the route if it's not already in the DB          
+                self.ip(x,"Deleting route containing 0 nodes")
+                # we only have to delete the route if it's not already in the DB
                 if route.id is not None:
                     route.delete()
 
         # return our completed race object.
-        self.ip(x,"returning race")            
+        self.ip(x,"returning race")
         return race
 
 
