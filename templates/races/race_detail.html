@@ -28,14 +28,18 @@
 	<h3>Routes</h3>
   <table class="races">
     <tr>
+      <th>Route</th>
+      <th>Rarity</th>
       <th colspan="2">Length</th>
       <th>Teams</th>
-      <th>Comfortable</th>
+      <th>Comfy</th>
       <th>Legal</th>
       <th>Path</th>
     </tr>
-    {% for r in race.getroutes_by_capacity %}
+    {% for r in race.getroutes_by_rarity %}
       <tr>
+        <td>{{r.pk}}</td>
+        <td>{{r.rarity}} times</td>
         <td>{{r.length}}</td>
         <td>{{race.measurement_system}}</td>
         <td>{{r.teams_comfortable}}</td>

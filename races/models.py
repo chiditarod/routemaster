@@ -58,6 +58,9 @@ class Race(models.Model):
     def getroutes_by_capacity(self):
         return self.routes.order_by('-capacity_comfortable', 'length')
 
+    def getroutes_by_rarity(self):
+        return self.routes.order_by('rarity', '-capacity_comfortable', 'length')
+
     def getroutes_by(self, sortfield):
         return self.routes.order_by(sortfield)
 
@@ -113,10 +116,14 @@ class Route(models.Model):
     capacity_max = models.IntegerField(blank=True, default=settings.DEFAULT_CAPACITY_MAXIMUM)
     selected = models.BooleanField()
     rarity = models.IntegerField(blank=True, default=100)
-    length = models.DecimalField(max_digits=5, decimal_places=2)
+    length = models.DecimalField(blank=True, max_digits=5, decimal_places=2)
 
     class Meta:
         ordering = ['-selected', 'rarity']
+
+    @property
+    def getName(self):
+        return "Route id %s" % self.pk
 
     def getLength(self):
         """return total length of route"""

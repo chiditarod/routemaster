@@ -68,7 +68,7 @@ class RaceBuilder(object):
             # make a new route if we weren't passed one via recursion.
             if not route:
                 route = Route()
-                route.name = 'Route %s' % (race.routes.count())
+                route.name = 'Route %s' % (route.pk)
                 route.race = race
                 route.checkpoint_start = race.checkpoint_start
                 route.checkpoint_finish = race.checkpoint_finish
@@ -252,7 +252,7 @@ class RaceBuilder(object):
         return "Deleted %s routes from %s" % (routesToDelete, race)
 
 
-    def findUniqueRoutes(self, race, repeat_qty = 0):
+    def findUniqueRoutes(self, race, seed_route = None, repeat_qty = 0):
         """Choose the routes that don't overlap any checkpoints in each respective routeleg position.  Repeats are allowed via a variable."""
         used_routes = []
         deferred_routes = []
@@ -260,8 +260,8 @@ class RaceBuilder(object):
         # make a list of lists, 'positions' in length
         a = list(list() for i in range(positions))
 
-        # iterate through all routes in the race
-        for route in race.routes.all():
+        # iterate through all routes in the race, starting with the most rare.
+        for route in race.routes.order_by('rarity'):
 
             ok = True
             print "processing route id: %s" % route.id
@@ -317,7 +317,7 @@ class RaceBuilder(object):
 
 
 
-
+    # This currently doesn't work.  It's trying to run permutations on each and every combination of all the routes.
     def findUniqueRoutes2(self, race, repeat_qty = 0):
         """Choose the routes that don't overlap any checkpoints in each respective routeleg position.  Repeats are allowed via a variable."""
 

@@ -63,7 +63,7 @@ def add_route_capacities(request, race_id):
 
 
 
-def find_unique_routes(request, race_id, repeat_qty = 0):
+def find_unique_routes(request, race_id, seed_route = None, repeat_qty = 0):
     """Find all unique routes that don't overlap checkpoint/positions"""
     race = Race.objects.get(id=race_id)
     if race.routes is None:
@@ -71,7 +71,8 @@ def find_unique_routes(request, race_id, repeat_qty = 0):
         return render_to_response('races/find_unique_routes.html', {'error': error, 'race_id': race_id})
 
     r = RaceBuilder()
-    used_routes, deferred_routes = r.findUniqueRoutes(race, repeat_qty)
+    used_routes, deferred_routes = r.findUniqueRoutes(race, seed_route, repeat_qty)
+    #used_routes, deferred_routes = r.findUniqueRoutes(race, repeat_qty)
     return render_to_response('races/find_unique_routes.html', {'used_routes': used_routes, 'deferred_routes': deferred_routes, 'race': race, 'repeat_qty': repeat_qty})
 
 
@@ -101,9 +102,9 @@ def delete_routes_in_race(request, race_id):
     r = RaceBuilder()
     output = r.deleteRoutesInRace(race)
     return render_to_response('races/generic.html', {'output': output, 'race': race})
-    
+
 from races import forms
-    
+
 def rarity_tree(request, race_id, rarity_threshold):
     # set default
     if not rarity_threshold:

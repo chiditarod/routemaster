@@ -24,35 +24,23 @@ TEMPLATE_DIRS = ( os.path.join(SITE_ROOT, 'templates'),)
 DEBUG_MODE = False
 DEFAULT_CAPACITY_COMFORTABLE = 1000000
 DEFAULT_CAPACITY_MAXIMUM = 1000000
-DEFAULT_RARITY_THRESHOLD = 2
+DEFAULT_RARITY_THRESHOLD = 3
 
 
 DATABASES = {
     'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'routemaster',
+        'HOST': 'localhost',
+        'PORT': '3306',
+        'USER': 'routemaster',
+        'PASSWORD': 'routemaster'
+    },
+    'sqlite': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': 'routemaster.sqlite',
-    },
-    'mysql': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'django_routemaster',
-        'HOST': '/Applications/MAMP/tmp/mysql/mysql.sock',
-        'PORT': '3306',
-        #'PORT': '8889',
-        'USER': 'root',
-        'PASSWORD': 'root'
     }
 }
-
-#DATABASES = {
-#    'default': {
-#        'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-#        'NAME': 'django_routemaster',                      # Or path to database file if using sqlite3.
-#        'USER': 'chiditarod',                      # Not used with sqlite3.
-#        'PASSWORD': 'mush08',                  # Not used with sqlite3.
-#        'HOST': 'mysql.nuclearblender.com',                      # Set to empty string for localhost. Not used with sqlite3.
-#        'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
-#    }
-#}
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name

@@ -13,7 +13,7 @@ deselectRoute.short_description = "Deselect Route"
 
 class RouteLegNodeInline(admin.TabularInline):
     model = RouteLegNode
-    extra = 3
+    extra = 1
     list_per_page = 500
     
 class RouteAdmin(admin.ModelAdmin):
@@ -28,7 +28,7 @@ class RouteLegAdmin(admin.ModelAdmin):
 
 class RouteInline(admin.TabularInline):
     model = Route
-    extra = 2
+    extra = 1
     list_per_page = 200
     
 class RaceAdmin(admin.ModelAdmin):

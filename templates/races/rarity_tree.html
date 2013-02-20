@@ -17,6 +17,7 @@
 
   <table class="races">
     <tr>
+      <th>Route ID</th>
       <th>Checkpoint</th>
       <th>Pos</th>
       <th>Rarity</th>
@@ -28,6 +29,7 @@
     </tr>
 	  {% for d in rarityTree %}
       <tr>
+        <td>{{d.route.pk}}</td>
         <td>{{d.checkpoint}}</td>
         <td>{{d.order}}</td>
 	      <td>{{d.rarity}} times</td>
