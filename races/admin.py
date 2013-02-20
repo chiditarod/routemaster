@@ -41,6 +41,4 @@ admin.site.register(Checkpoint)
 admin.site.register(RouteLegNode)
 admin.site.register(RouteLeg, RouteLegAdmin)
 admin.site.register(Route, RouteAdmin)
-#admin.site.register(Route)
-
 admin.site.register(Race, RaceAdmin)

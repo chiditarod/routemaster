@@ -438,6 +438,52 @@ class RaceBuilder(object):
         return s
 
 
+
+    def subCheckpointNameFromId(id):
+        checkpoint = Checkpoint.objects.filter(id=id)
+        return checkpoint.name
+
+
+    # Generate the checkpoint capacity matrix for all selected routes in a race
+    def capacityMatrix(self, race):
+
+        positions = race.checkpoint_qty - 1 # subtract one so we don't include the finish line.
+        # make a list of lists, 'positions' in length
+        a = list(dict() for i in range(positions))
+
+        # iterate through all of our selected routes in this race
+        routes = Route.objects.filter(race=race, selected=True).distinct()
+        for route in routes:
+
+            # iterate through all checkpoints in each route
+            for x, leg in enumerate(route.routelegs.all()):
+
+                # if we're evaluating the finish line, skip (since the finish is always the same)
+                if (x == positions):
+                    break
+
+                # build an index of each checkpoint position.  put a dict of checkpoint/occurence frequency values in each.
+                key = str(leg.checkpoint_b.name)
+                if key in a[x]:
+                    a[x][key] += 1
+                else:
+                    a[x][key] = 1
+
+        for x, pos in enumerate(a):
+            print "%s: %s" % (x, pos)
+
+
+        for x, row in enumerate(a):
+            print "\n[position %s]" % (x)
+            # convert dict checkpoint/occurence list into sortable tuples.
+            pairs = zip(row.keys(), row.values())
+
+            # sort the least-occuring position/checkpoint combos first
+            sortedPairs = sorted(pairs)
+            print sortedPairs
+
+        return a
+
     def rarityTree(self, race, rarityThreshold):
         """Figure out the least-frequent checkpoint/position pairs repeated for all routes and pull their routes."""
         print "Rarity Tree for Race: %s" % race

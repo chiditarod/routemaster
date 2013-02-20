@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Capacity Matrix{% endblock %}
+{% block h1 %}Checkpoint/Position capacities{% endblock %}
+{% block content %}
+
+{% if error %}
+	<div class="error">{{error}}</div>
+{% endif %}
+
+{% if not race %}
+	<p>Problem getting race for race_id: {{race_id}}</p>
+{% else %}
+
+	<h2>Race: {{race.name}}</h2>
+
+  <table class="races">
+    <tr>
+      <td>
+      <th>Route ID</th>
+      <th>Checkpoint</th>
+      <th>Pos</th>
+      <th>Rarity</th>
+      <th>Length</th>
+      <th>Teams</th>
+      <th>Comfortable</th>
+      <th>Legal</th>
+      <th>Path</th>
+    </tr>
+	  {% for p in capacityMatrix %}
+      <tr>
+        <td>{{p.route.pk}}</td>
+        <td>{{d.checkpoint}}</td>
+        <td>{{d.order}}</td>
+	      <td>{{d.rarity}} times</td>
+        <td>{{d.route.length}} {{d.route.race.measurement_system}}</td>
+        <td>{{d.route.teams_comfortable}}</td>
+        <td class="center">{{d.route.capacity_comfortable}}</td>
+        <td class="center">{{d.route.capacity_max}}</td>
+        <td>{{d.route.getPath}}</td>
+      </tr>
+    {% endfor %}
+  </table>
+
+{% endif %}
+
+{% endblock %}

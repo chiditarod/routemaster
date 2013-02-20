@@ -132,3 +132,15 @@ def checkpoint_frequency(request, race_id):
     r = RaceBuilder()
     counts = r.checkpointFrequency(routes)
     return render_to_response('races/checkpoint_frequency.html', {'counts': counts, 'race': race})
+
+
+# print the checkpoint capacity matrix for all selected routes in a race
+def capacity_matrix(request, race_id):
+    race = Race.objects.get(id=race_id)
+    if race.routes is None:
+        error = 'no-routes'
+        return render_to_response('races/generic.html', {'error': error, 'race_id': race_id, 'form':form})
+
+    r = RaceBuilder()
+    capacityMatrix = r.capacityMatrix(race)
+    return render_to_response('races/capacity_matrix.html', {'capacityMatrix': capacityMatrix, 'race': race})
