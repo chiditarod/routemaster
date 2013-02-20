@@ -150,18 +150,18 @@ class Route(models.Model):
             return "Exception thrown!"
 
     def __unicode__(self):
-        
-        out = ''
+
         out = u"* " if self.selected else u''
+        out += self.race.name + ": "
+
         out += u"%s %s] " %  (self.length, self.race.measurement_system)
 
         if self.capacity_comfortable < settings.DEFAULT_CAPACITY_COMFORTABLE and self.capacity_max < settings.DEFAULT_CAPACITY_MAXIMUM:
             out += u"comfort: %s, legal: %s] \t " % (self.capacity_comfortable, self.capacity_max)
         #if self.rarity:
             #out += " u[%s rare] " % self.rarity
-        #out += self.getPath()
-
-        return out
+        out += self.getPath()
+        return str(self.pk) if self.pk else out
 
     def clone(self):
         """Return an identical copy of the instance with a new ID.  copies M2M relationships with 'through' intermediate model."""
