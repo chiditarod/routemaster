@@ -1,8 +1,8 @@
 
 # Installation
     $ brew install python --with-brewed-openssl
-    $ pip install virtualenv
-    $ mkdir ~/.python/Virtualenvs
+    $ PIP_REQUIRE_VIRTUALENV=false pip install virtualenv
+    $ mkdir -p ~/.python/Virtualenvs
     $ vim ~/.bashrc # add the lines below.
 
         # virtualenv should use Distribute instead of legacy setuptools
