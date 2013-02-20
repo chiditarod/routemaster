@@ -28,7 +28,7 @@ DEFAULT_RARITY_THRESHOLD = 3
 
 
 DATABASES = {
-    'default': {
+    'mysql': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'routemaster',
         'HOST': 'localhost',
@@ -36,12 +36,12 @@ DATABASES = {
         'USER': 'routemaster',
         'PASSWORD': 'routemaster'
     },
-    'sqlite': {
+    'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': 'routemaster.sqlite',
     }
-}
 
+}
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
 # although not all choices may be available on all operating systems.

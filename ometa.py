@@ -147,7 +147,11 @@ class RaceBuilder(object):
             node.order = route.countRoutelegs()
             self.ip(x,'[NEW NODE] %s [order: %s]' % (node, node.order))
 
-            # add the new node to the route
+            # HACK: we should be able to add a route w/o a length.  Not sure why mysql blows up
+            # it's ok since we set the actual length a little ways down
+            route.length = -1
+
+            # add the new node to the potential route
             route.save()
             route.routelegnode_set.add(node)
 
@@ -170,6 +174,8 @@ class RaceBuilder(object):
                     #   http://stackoverflow.com/questions/2055626/filter-many-to-many-relation-in-django
                     route_copy.length = route_copy.getLength()
                     race.routes.add(route_copy)
+                    route_copy.name = route_copy.id
+                    route_copy.save()
                     race.save()
 
                 # slide the highest node off the route, regardless of whether or not we saved it

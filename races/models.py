@@ -150,7 +150,7 @@ class Route(models.Model):
             return "Exception thrown!"
 
     def __unicode__(self):
-
+        
         out = ''
         out = u"* " if self.selected else u''
         out += u"%s %s] " %  (self.length, self.race.measurement_system)
