@@ -135,7 +135,7 @@ class RaceBuilder(object):
                     if r.routeleg.checkpoint_b == leg.checkpoint_b:
                         bad=True
                 if bad:
-                     self.ip(x,'\tFAIL: %s is already in use in this route.' % leg.checkpoint_b.name)
+                    self.ip(x,'\tFAIL: %s is already in use in this route.' % leg.checkpoint_b.name)
                      continue
                 self.ip(x,'\tPASS: %s is not yet in use in this route.' % leg.checkpoint_b.name)
 
@@ -290,12 +290,12 @@ class RaceBuilder(object):
                     print "checkpoint %s is not yet used as checkpoint %s.  Add it to our temp list, b\n" % (leg.checkpoint_b, x)
                     b[x].append(leg.checkpoint_b)
                 # used less than our repeat qty
-                elif repeat_qty and a[x].count(leg.checkpoint_b) < int(repeat_qty) + 1:
-                    print "checkpoint %s is used %s times as checkpoint %s, with %s repeats allowed. Add it to our temp list, b\n" % (leg.checkpoint_b, x, a[x].count(leg.checkpoint_b), repeat_qty)
+            elif repeat_qty and a[x].count(leg.checkpoint_b) < int(repeat_qty) + 1:
+                print "checkpoint %s is used %s times as checkpoint %s, with %s repeats allowed. Add it to our temp list, b\n" % (leg.checkpoint_b, x, a[x].count(leg.checkpoint_b), repeat_qty)
                     b[x].append(leg.checkpoint_b)
                 # failure case
-                else:
-                    print "checkpoint %s is already used as checkpoint %s.  defer entire route\n" % (leg.checkpoint_b, x)
+            else:
+                print "checkpoint %s is already used as checkpoint %s.  defer entire route\n" % (leg.checkpoint_b, x)
                     deferred_routes.append(route)
                     ok = False
                     break
@@ -380,14 +380,14 @@ class RaceBuilder(object):
                             print "checkpoint %s is not yet used as checkpoint %s.  Add it to our temp list, b\n" % (leg.checkpoint_b, x)
                         b[x].append(leg.checkpoint_b)
                     # used less than our repeat qty
-                    elif repeat_qty and a[x].count(leg.checkpoint_b) < int(repeat_qty) + 1:
-                        if settings.DEBUG_MODE:            
-                            print "checkpoint %s is used %s times as checkpoint %s, with %s repeats allowed. Add it to our temp list, b\n" % (leg.checkpoint_b, x, a[x].count(leg.checkpoint_b), repeat_qty)
+                elif repeat_qty and a[x].count(leg.checkpoint_b) < int(repeat_qty) + 1:
+                    if settings.DEBUG_MODE:            
+                        print "checkpoint %s is used %s times as checkpoint %s, with %s repeats allowed. Add it to our temp list, b\n" % (leg.checkpoint_b, x, a[x].count(leg.checkpoint_b), repeat_qty)
                         b[x].append(leg.checkpoint_b)
                     # failure case
-                    else:
-                        if settings.DEBUG_MODE:
-                            print "checkpoint %s is already used as checkpoint %s.  defer entire route\n" % (leg.checkpoint_b, x)
+                else:
+                    if settings.DEBUG_MODE:
+                        print "checkpoint %s is already used as checkpoint %s.  defer entire route\n" % (leg.checkpoint_b, x)
 #                        deferred_routes.append(route)
                         ok = False
                         break
@@ -537,8 +537,8 @@ class RaceBuilder(object):
                 # filter routes: choose the routes that have 'checkpoint' in order 'x'.
                 # TODO 2013 - this call below is showing disabled checkpoints.  WTF.
                 routes = Route.objects.filter(race=race)\
-                                      .filter(routelegnode__order=x, routelegs__checkpoint_b__pk=checkpoint_id)\
-                                      .distinct()
+                        .filter(routelegnode__order=x, routelegs__checkpoint_b__pk=checkpoint_id)\
+                        .distinct()
 
                 print "found %s routes" % routes.count()
 
