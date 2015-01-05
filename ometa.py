@@ -77,6 +77,11 @@ class RaceBuilder(object):
             x = route.countRoutelegs()
             self.ip(x,"Trying %s for route: %s" % (leg, route))
 
+            # ensure that checkpoint b is not disabled
+            if (leg.checkpoint_b.enabled == False):
+                self.ip(x, '\tFAIL: %s is disabled.  Skipping.' % leg.checkpoint_b.name)
+                continue
+
             # check for bad distance
             if (leg.distance > race.max_leg_distance):
                 self.ip(x,"  FAIL: %s distance > max: %s" % (leg.distance, race.max_leg_distance))
@@ -88,11 +93,6 @@ class RaceBuilder(object):
                 continue
             self.ip(x,"  PASS: %s distance >= min:%s" % (leg.distance, race.min_leg_distance))
 
-            # ensure that checkpoint b is not disabled
-            if (leg.checkpoint_b.enabled == False):
-                self.ip(x, '\tFAIL: %s is disabled.  Skipping.' % leg.checkpoint_b.name)
-                continue
-
             # checkpoint_b should never be the starting line
             if (leg.checkpoint_b == race.checkpoint_start):
                 self.ip(x,'\tFAIL: %s = starting line.  Cannot be a checkpoint.' % leg.checkpoint_b.name)
@@ -102,7 +102,7 @@ class RaceBuilder(object):
 
             # additional checks when a route exists
             if route:
-                numlegs = route.countRoutelegs() 
+                numlegs = route.countRoutelegs()
 
                 if (numlegs > race.checkpoint_qty):
                     self.ip(x,'\tERROR: numlegs = %s > %s (checkpoint qty).  Should not happen.' % (numlegs, race.checkpoint_qty + 1))
