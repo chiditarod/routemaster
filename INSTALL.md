@@ -1,5 +1,8 @@
 
 # Installation
+
+Tested exclusively on OSX. That's just how we roll.  If you get this to work with Windows, please share the process with us by [opening an issue](https://github.com/chiditarod/routemaster/issues/new)!
+
     $ brew install python --with-brewed-openssl
     $ PIP_REQUIRE_VIRTUALENV=false pip install virtualenv
     $ mkdir -p ~/.python/Virtualenvs
