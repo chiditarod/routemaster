@@ -9,7 +9,7 @@ choose the distances between them all, set a few params like # of teams,
 the # of checkpoints, etc, then hit go, and it figures out the best routes.
 
 ## To Install
-Read [INSTALL.md](https://bitbucket.org/ometa/routemaster/src/tip/INSTALL.md)
+Read [INSTALL.md](https://github.com/chiditarod/routemaster/blob/master/INSTALL.md)
 
 ## Usage
 
