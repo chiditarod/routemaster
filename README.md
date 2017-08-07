@@ -1,8 +1,9 @@
 
 # Routemaster
-Route generator software for Chiditarod.
-It mostly works. This code is like an old couch. When you sit
-down, at first it's kind of old and dusty. But it serves it's purpose.
+_Route generator software for CHIditarod_
+
+Warning, this code is uggggly.  Somehow, every year, I'm able to get it to run.  YMMV.
+
 Basically it is a traveling salesman solver.  There is a starting line, a
 finish line, and a configurable amount of checkpoints in-between. You
 first add the various checkpoints, add the distances between them all, set a few params like # of teams,
